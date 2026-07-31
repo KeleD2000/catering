@@ -11,8 +11,6 @@
 <header class="site-header">
 <div class="topbar">
   <span>Pécs, Jókai tér 6.</span>
-  <span>Asztalfoglalás: <span class="gold">+36 72 216 055</span> &nbsp;|&nbsp; <span class="gold">+36 72 532 189</span></span>
-  <span>H–Cs, V: 11:30–23:00 &nbsp;|&nbsp; P–Sz: 11:30–00:00</span>
 </div>
 
 <nav class="navbar">
@@ -27,12 +25,11 @@
   <button class="nav-toggle" id="navToggle" aria-label="Menü megnyitása" aria-expanded="false">☰</button>
 
   <ul class="nav-links" id="navLinks">
-    <li><a href="https://elefantos.hu">Főoldal</a></li>
-    <li><a href="https://elefantos.hu/rolunk/">Rólunk</a></li>
-    <li><a href="https://elefantos.hu/etlap/">Étlap</a></li>
-    <li><a href="#" class="active">Catering</a></li>
-    <li><a href="https://elefantos.hu/napi-menu/">Napi menü</a></li>
-    <li><a href="https://elefantos.hu/kapcsolat/">Kapcsolat</a></li>
+    <li><a href="#">Főoldal</a></li>
+    <li><a href="#rolunk">Rólunk</a></li>
+    <li><a href="#szolgaltatasok">Szolgáltatások</a></li>
+    <li><a href="#velemenyek">Vélemények</a></li>
+    <li><a href="#kapcsolat">Kapcsolat</a></li>
   </ul>
 </nav>
 </header>
@@ -44,7 +41,7 @@
     <h1>Tegyük <em>emlékezetessé</em><br>a rendezvényedet</h1>
     <p>1996 óta varázsoljuk Pécsre az autentikus olasz ízeket. Kiszállítással akár 200 főig, saját 60 fős különteremmel – minden eseményre megtaláljuk a tökéletes megoldást.</p>
     <a href="#kapcsolat" class="btn-gold">Árajánlatot kérek</a>
-    <a href="#csomagok" class="btn-ghost">Csomagok</a>
+    <a href="#szolgaltatasok" class="btn-ghost">Csomagok</a>
   </div>
   <div class="hero-right">
     <h3>Rendezvényszervezés</h3>
@@ -61,14 +58,47 @@
   </div>
 </section>
 
-<section class="section-dark" id="csomagok">
-  <div class="section-header">
+<section class="about-section" id="rolunk">
+  <div class="about-text reveal">
+    <div class="overtitle">Rólunk</div>
+    <h2>30 éve <em>szenvedéllyel</em><br>az olasz gasztronómiáért</h2>
+    <p>Az Elefántos története 1996-ban kezdődött Pécs belvárosában, azzal a céllal, hogy a valódi, autentikus olasz konyhát hozzuk el a városba. Séfjeink nápolyi tudást hoztak magukkal, amit azóta is generációkon át adunk tovább – minden tésztában, szószban és pizzában ott van ez az örökség.</p>
+    <p>Mára nem csak étteremként, hanem megbízható rendezvényszervező partnerként is ismernek minket Pécsett és környékén. Legyen szó céges gálavacsoráról, esküvőről vagy családi ünnepségről, csapatunk a tervezéstől a kiszolgálásig végigkíséri az eseményt.</p>
+    <ul class="about-values">
+      <li>Autentikus nápolyi receptek</li>
+      <li>Friss, helyi alapanyagok</li>
+      <li>Tapasztalt rendezvénycsapat</li>
+      <li>Egyedi menütervezés</li>
+    </ul>
+  </div>
+  <div class="about-stats">
+    <div class="stat-card reveal reveal-delay-1">
+      <span class="stat-number" data-target="30" data-suffix="+">0</span>
+      <span class="stat-label">Év tapasztalat</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-2">
+      <span class="stat-number" data-target="1200" data-suffix="+">0</span>
+      <span class="stat-label">Megvalósult rendezvény</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-3">
+      <span class="stat-number" data-target="200" data-suffix="">0</span>
+      <span class="stat-label">Fős maximum kiszállítás</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-1">
+      <span class="stat-number" data-target="98" data-suffix="%">0</span>
+      <span class="stat-label">Elégedett vendég</span>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark" id="szolgaltatasok">
+  <div class="section-header reveal">
     <div class="overtitle">Ajánlataink</div>
-    <h2>Catering csomagok</h2>
+    <h2>Szolgáltatások</h2>
     <p>Minden rendezvényhez megtaláljuk a legmegfelelőbb megoldást – büfétől a prémium bankettig.</p>
   </div>
   <div class="packages-row">
-    <div class="pkg">
+    <div class="pkg reveal reveal-delay-1">
       <span class="pkg-tag">Alap csomag</span>
       <h3>Büfé</h3>
       <div class="pkg-desc">Könnyű fogások, friss saláták, olasz előételek önkiszolgáló formában</div>
@@ -82,7 +112,7 @@
       </ul>
       <a href="#kapcsolat" class="btn-ghost">Részletek</a>
     </div>
-    <div class="pkg featured">
+    <div class="pkg featured reveal reveal-delay-2">
       <span class="pkg-tag">Legnépszerűbb</span>
       <h3>Bankett</h3>
       <div class="pkg-desc">Teljes körű étkeztetés, főételek, desszertek, nápolyi pizza állomás</div>
@@ -97,7 +127,52 @@
       </ul>
       <a href="#kapcsolat" class="btn-gold">Árajánlatot kérek</a>
     </div>
-    <div class="pkg">
+    <div class="pkg reveal reveal-delay-3">
+      <span class="pkg-tag">Prémium</span>
+      <h3>Exkluzív</h3>
+      <div class="pkg-desc">Személyes séf, egyedi menüsor, fehér kesztyűs kiszolgálás</div>
+      <div class="pkg-price">11 500 Ft <span>/ fő</span></div>
+      <div class="pkg-capacity">50 – 200 fő &nbsp;·&nbsp; egész nap</div>
+      <ul class="pkg-list">
+        <li>Személyes séf helyszínen</li>
+        <li>Egyedi menütervezés</li>
+        <li>Fehér kesztyűs felszolgálás</li>
+        <li>Prémium ital csomag</li>
+        <li>Dekoráció koordináció</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+        <div class="pkg reveal reveal-delay-3">
+      <span class="pkg-tag">Prémium</span>
+      <h3>Exkluzív</h3>
+      <div class="pkg-desc">Személyes séf, egyedi menüsor, fehér kesztyűs kiszolgálás</div>
+      <div class="pkg-price">11 500 Ft <span>/ fő</span></div>
+      <div class="pkg-capacity">50 – 200 fő &nbsp;·&nbsp; egész nap</div>
+      <ul class="pkg-list">
+        <li>Személyes séf helyszínen</li>
+        <li>Egyedi menütervezés</li>
+        <li>Fehér kesztyűs felszolgálás</li>
+        <li>Prémium ital csomag</li>
+        <li>Dekoráció koordináció</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+        <div class="pkg reveal reveal-delay-3">
+      <span class="pkg-tag">Prémium</span>
+      <h3>Exkluzív</h3>
+      <div class="pkg-desc">Személyes séf, egyedi menüsor, fehér kesztyűs kiszolgálás</div>
+      <div class="pkg-price">11 500 Ft <span>/ fő</span></div>
+      <div class="pkg-capacity">50 – 200 fő &nbsp;·&nbsp; egész nap</div>
+      <ul class="pkg-list">
+        <li>Személyes séf helyszínen</li>
+        <li>Egyedi menütervezés</li>
+        <li>Fehér kesztyűs felszolgálás</li>
+        <li>Prémium ital csomag</li>
+        <li>Dekoráció koordináció</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+        <div class="pkg reveal reveal-delay-3">
       <span class="pkg-tag">Prémium</span>
       <h3>Exkluzív</h3>
       <div class="pkg-desc">Személyes séf, egyedi menüsor, fehér kesztyűs kiszolgálás</div>
@@ -115,7 +190,7 @@
   </div>
 </section>
 
-<section class="section-mid">
+<section class="section-mid reveal">
   <div class="section-header">
     <div class="overtitle">Galéria</div>
     <h2>Rendezvényeinkből</h2>
@@ -157,25 +232,25 @@
   </div>
 </section>
 
-<section class="section-dark">
-  <div class="section-header">
+<section class="section-dark" id="velemenyek">
+  <div class="section-header reveal">
     <div class="overtitle">Vélemények</div>
     <h2>Mit mondanak vendégeink</h2>
   </div>
   <div class="reviews-row">
-    <div class="review">
+    <div class="review reveal reveal-delay-1">
       <div class="review-stars">★★★★★</div>
       <div class="review-text">"A céges karácsonyi vacsoránk feledhetetlen volt. A pizza és a tiramisu mindenkit lenyűgözött – az egész csapat el volt ragadtatva."</div>
       <div class="review-author">Kovács Márton</div>
       <div class="review-event">Céges bankett, 80 fő</div>
     </div>
-    <div class="review">
+    <div class="review reveal reveal-delay-2">
       <div class="review-stars">★★★★★</div>
       <div class="review-text">"Esküvőnkre választottuk az Elefántost – pontosak, figyelmesek, és az ételek tökéletesek voltak. Minden vendégünk megkérdezte, ki a caterer."</div>
       <div class="review-author">Szabó Vivien</div>
       <div class="review-event">Esküvői catering, 120 fő</div>
     </div>
-    <div class="review">
+    <div class="review reveal reveal-delay-3">
       <div class="review-stars">★★★★★</div>
       <div class="review-text">"30 éves tapasztalat megmutatkozik minden tányéron. Profi csapat, autentikus olasz ízek – teljes szívből ajánlom."</div>
       <div class="review-author">Nagy Péter</div>
@@ -184,7 +259,7 @@
   </div>
 </section>
 
-<section class="contact-section" id="kapcsolat">
+<section class="contact-section reveal" id="kapcsolat">
   <div class="contact-grid">
     <div class="contact-left">
       <div class="overtitle">Kapcsolat</div>
@@ -201,7 +276,7 @@
         <div class="contact-icon">✉</div>
         <div>
           <div class="contact-label">E-mail</div>
-          <div class="contact-val">elefantino.rendezvenyszervezes@gmail.com</div>
+          <div class="contact-val">catering@elefantos.hu</div>
         </div>
       </div>
       <div class="contact-item">
@@ -245,8 +320,18 @@
         </div>
       </div>
       <div class="form-field">
-        <label>Rendezvény dátuma</label>
-        <input type="date">
+        <label>Helyszín</label>
+        <input type="text" placeholder="Rendezvény helyszíne (cím vagy terem neve)">
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Rendezvény dátuma</label>
+          <input type="date">
+        </div>
+        <div class="form-field">
+          <label>Kezdés időpontja</label>
+          <input type="time">
+        </div>
       </div>
       <div class="form-field">
         <label>Üzenet</label>
@@ -264,30 +349,17 @@
   </div>
   <div>
     <h4>Navigáció</h4>
-    <a href="https://elefantos.hu">Főoldal</a>
-    <a href="#">Catering</a>
-    <a href="https://elefantos.hu/etlap/">Étlap</a>
-    <a href="https://elefantos.hu/napi-menu/">Napi menü</a>
-    <a href="https://elefantos.hu/kapcsolat/">Kapcsolat</a>
+    <a href="#">Főoldal</a>
+    <a href="#rolunk">Rólunk</a>
+    <a href="#szolgaltatasok">Szolgáltatások</a>
+    <a href="#velemenyek">Vélemények</a>
+    <a href="#kapcsolat">Kapcsolat</a>
   </div>
-  <div>
-    <h4>Nyitvatartás</h4>
-    <p>H–Cs, V: 11:30 – 23:00</p>
-    <p>P–Sz: 11:30 – 00:00</p>
-    <p style="margin-top:12px">+36 72 216 055<br>+36 72 532 189</p>
-  </div>
+
 </footer>
 <div class="footer-bottom">© 2026 Elefántos Pizzéria &amp; Catering · Minden jog fenntartva</div>
 
-<script>
-  const navToggle = document.getElementById('navToggle');
-  const navLinks = document.getElementById('navLinks');
-  navToggle.addEventListener('click', () => {
-    const isOpen = navLinks.classList.toggle('open');
-    navToggle.setAttribute('aria-expanded', isOpen);
-    navToggle.textContent = isOpen ? '✕' : '☰';
-  });
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>

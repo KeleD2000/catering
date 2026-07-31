@@ -157,6 +157,71 @@ img{max-width:100%;display:block}
   margin-right:auto;
 }
 
+/* ABOUT / RÓLUNK */
+.about-section{
+  background:#1a2456;
+  padding:90px 32px;
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:56px;
+  align-items:center;
+  border-bottom:1px solid #2a3568;
+}
+.about-text h2{font-size:32px;font-weight:400;line-height:1.25;color:#fff;margin-bottom:20px}
+.about-text h2 em{color:#c9a25c;font-style:italic}
+.about-text p{
+  font-family:Arial,sans-serif;
+  font-size:15px;
+  line-height:1.75;
+  color:#9aa3cf;
+  margin-bottom:18px;
+}
+.about-values{
+  list-style:none;
+  margin-top:24px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px 24px;
+}
+.about-values li{
+  font-family:Arial,sans-serif;
+  font-size:13px;
+  color:#c4cae6;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:7px 0;
+  border-bottom:1px solid #2a3568;
+}
+.about-values li::before{content:"✦";color:#c9a25c;font-size:10px;flex-shrink:0}
+
+.about-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2px;
+  background:#2a3568;
+}
+.stat-card{
+  background:#1b2654;
+  padding:32px 20px;
+  text-align:center;
+}
+.stat-number{
+  display:block;
+  font-family:Georgia,serif;
+  font-size:38px;
+  color:#c9a25c;
+  line-height:1;
+  margin-bottom:10px;
+}
+.stat-label{
+  font-family:Arial,sans-serif;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#7680ac;
+}
+
 /* PACKAGES */
 .packages-row{
   display:grid;
@@ -312,7 +377,49 @@ img{max-width:100%;display:block}
 }
 .footer h4{font-family:Arial,sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#c9a25c;margin-bottom:16px}
 .footer p,.footer a{font-family:Arial,sans-serif;font-size:13px;color:#56619a;line-height:1.8;display:block}
+.footer a{transition:color .2s ease}
+.footer a:hover{color:#c9a25c}
 .footer-bottom{background:#080c20;padding:16px 32px;text-align:center;font-family:Arial,sans-serif;font-size:11px;color:#3e4880;letter-spacing:.06em}
+
+/* SOCIAL ICONS */
+.social-links{display:flex;gap:12px;margin-top:4px}
+.social-icon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  line-height:0;
+  border:1px solid #2a3568;
+  border-radius:50%;
+  color:#7680ac;
+  flex-shrink:0;
+  box-sizing:border-box;
+  transition:color .2s ease,border-color .2s ease,background .2s ease;
+}
+.social-icon svg{
+  display:block;
+  width:22px;
+  height:22px;
+  flex-shrink:0;
+}
+.social-icon:hover{color:#0d1430;background:#c9a25c;border-color:#c9a25c}
+
+/* =========================================
+   SCROLL-REVEAL ANIMÁCIÓ
+   ========================================= */
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .7s ease, transform .7s ease;
+}
+.reveal.is-visible{
+  opacity:1;
+  transform:translateY(0);
+}
+.reveal-delay-1.is-visible{transition-delay:.1s}
+.reveal-delay-2.is-visible{transition-delay:.2s}
+.reveal-delay-3.is-visible{transition-delay:.3s}
 
 /* =========================================
    RESPONSIVE BREAKPOINTS
@@ -322,6 +429,7 @@ img{max-width:100%;display:block}
 @media(max-width:1024px){
   .hero-section{padding:64px 24px}
   .section-dark,.section-mid,.contact-section{padding:56px 24px}
+  .about-section{padding:64px 24px}
   .packages-row,.reviews-row{grid-template-columns:repeat(2,1fr)}
   .pkg:last-child,.review:last-child{grid-column:1/-1}
 }
@@ -391,6 +499,16 @@ img{max-width:100%;display:block}
   .section-dark,.section-mid,.contact-section{padding:48px 16px}
   .section-header h2{font-size:26px}
 
+  /* About / Rólunk stacks */
+  .about-section{
+    grid-template-columns:1fr;
+    padding:48px 16px;
+    gap:32px;
+  }
+  .about-text h2{font-size:24px}
+  .about-values{grid-template-columns:1fr}
+  .about-stats{grid-template-columns:1fr 1fr}
+
   /* Packages & Reviews stack */
   .packages-row,.reviews-row{grid-template-columns:1fr}
   .pkg:last-child,.review:last-child{grid-column:auto}
@@ -415,4 +533,6 @@ img{max-width:100%;display:block}
   .hero-left p,.hero-right p{font-size:14px}
   .pkg-price{font-size:24px}
   .review-text{font-size:14px}
+  .stat-number{font-size:30px}
+  .about-stats{grid-template-columns:1fr 1fr}
 }
