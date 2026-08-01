@@ -1,4 +1,27 @@
 // ============================
+// Sötét/világos mód
+// ============================
+(function () {
+  const root = document.documentElement;
+  const stored = localStorage.getItem('theme');
+  if (stored === 'light') root.setAttribute('data-theme', 'light');
+
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const isLight = root.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        root.removeAttribute('data-theme');
+        localStorage.setItem('theme', 'dark');
+      } else {
+        root.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+      }
+    });
+  }
+})();
+
+// ============================
 // Mobil navigáció (hamburger menü)
 // ============================
 const navToggle = document.getElementById('navToggle');
@@ -22,15 +45,13 @@ navLinks.querySelectorAll('a[href^="#"]').forEach(link => {
 // ============================
 // Scroll-reveal animáció
 // ============================
-// Minden .reveal osztályú elem finoman felúszik és megjelenik,
-// amikor görgetés közben a nézetbe ér.
 const revealEls = document.querySelectorAll('.reveal');
 
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('is-visible');
-      revealObserver.unobserve(entry.target); // csak egyszer animáljon
+      revealObserver.unobserve(entry.target);
     }
   });
 }, {
@@ -62,7 +83,6 @@ function animateCounter(el) {
 
   function step(now) {
     const progress = Math.min((now - startTime) / duration, 1);
-    // ease-out
     const eased = 1 - Math.pow(1 - progress, 3);
     el.textContent = Math.floor(eased * target) + suffix;
     if (progress < 1) {
