@@ -95,3 +95,61 @@ function animateCounter(el) {
 }
 
 counters.forEach(el => counterObserver.observe(el));
+
+// ============================
+// Ajánlatkérő űrlap küldése (AJAX -> PHP -> SMTP)
+// ============================
+const cateringForm = document.getElementById('cateringForm');
+
+if (cateringForm) {
+  const submitBtn = document.getElementById('formSubmitBtn');
+  const formMessage = document.getElementById('formMessage');
+
+  cateringForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Egyszerű kliensoldali validáció
+    if (!cateringForm.checkValidity()) {
+      cateringForm.reportValidity();
+      return;
+    }
+
+    const formData = new FormData(cateringForm);
+    const originalBtnText = submitBtn.textContent;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Küldés...';
+    formMessage.textContent = '';
+    formMessage.className = 'form-message';
+
+    try {
+      const response = await fetch('send-mail.php', {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      let result;
+      try {
+        result = await response.json();
+      } catch {
+        result = { success: false, message: 'Váratlan válasz érkezett a szervertől.' };
+      }
+
+      if (response.ok && result.success) {
+        formMessage.textContent = result.message || 'Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.';
+        formMessage.classList.add('form-message--success');
+        cateringForm.reset();
+      } else {
+        formMessage.textContent = result.message || 'Hiba történt a küldés során. Kérjük, próbálja újra, vagy hívjon minket telefonon.';
+        formMessage.classList.add('form-message--error');
+      }
+    } catch (err) {
+      formMessage.textContent = 'Hálózati hiba történt. Kérjük, ellenőrizze az internetkapcsolatot, majd próbálja újra.';
+      formMessage.classList.add('form-message--error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalBtnText;
+    }
+  });
+}

@@ -354,62 +354,77 @@
           </div>
         </div>
         <div>
-          <div class="form-row">
-            <div class="form-field">
-              <label>Neve</label>
-              <input type="text" placeholder="Teljes neve" />
+          <form id="cateringForm" class="catering-form" novalidate>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-name">Neve</label>
+                <input id="f-name" name="name" type="text" placeholder="Teljes neve" required />
+              </div>
+              <div class="form-field">
+                <label for="f-phone">Telefonszám</label>
+                <input id="f-phone" name="phone" type="tel" placeholder="+36 ..." required />
+              </div>
             </div>
             <div class="form-field">
-              <label>Telefonszám</label>
-              <input type="tel" placeholder="+36 ..." />
+              <label for="f-email">E-mail cím</label>
+              <input id="f-email" name="email" type="email" placeholder="email@pelda.hu" required />
             </div>
-          </div>
-          <div class="form-field">
-            <label>E-mail cím</label>
-            <input type="email" placeholder="email@pelda.hu" />
-          </div>
-          <div class="form-row">
-            <div class="form-field">
-              <label>Rendezvény típusa</label>
-              <select>
-                <option>Válasszon...</option>
-                <option>Grill</option>
-                <option>Pizzás rendezvény</option>
-                <option>Bankett vacsora</option>
-                <option>Hideg tálak</option>
-                <option>Céges rendezvények</option>
-                <option>Esküvő</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label>Vendégek száma</label>
-              <input type="number" placeholder="pl. 80" />
-            </div>
-          </div>
-          <div class="form-field">
-            <label>Helyszín</label>
-            <input
-              type="text"
-              placeholder="Rendezvény helyszíne (cím vagy terem neve)"
-            />
-          </div>
-          <div class="form-row">
-            <div class="form-field">
-              <label>Rendezvény dátuma</label>
-              <input type="date" />
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-type">Rendezvény típusa</label>
+                <select id="f-type" name="event_type" required>
+                  <option value="">Válasszon...</option>
+                  <option>Grill</option>
+                  <option>Pizzás rendezvény</option>
+                  <option>Bankett vacsora</option>
+                  <option>Hideg tálak</option>
+                  <option>Céges rendezvények</option>
+                  <option>Esküvő</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label for="f-guests">Vendégek száma</label>
+                <input id="f-guests" name="guests" type="number" min="1" placeholder="pl. 80" />
+              </div>
             </div>
             <div class="form-field">
-              <label>Kezdés időpontja</label>
-              <input type="time" />
+              <label for="f-location">Helyszín</label>
+              <input
+                id="f-location"
+                name="location"
+                type="text"
+                placeholder="Rendezvény helyszíne (cím vagy terem neve)"
+              />
             </div>
-          </div>
-          <div class="form-field">
-            <label>Üzenet</label>
-            <textarea
-              placeholder="Rövid leírás a rendezvényről, különleges kérések..."
-            ></textarea>
-          </div>
-          <button class="form-submit">Ajánlatot kérek</button>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="f-date">Rendezvény dátuma</label>
+                <input id="f-date" name="event_date" type="date" />
+              </div>
+              <div class="form-field">
+                <label for="f-time">Kezdés időpontja</label>
+                <input id="f-time" name="event_time" type="time" />
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="f-message">Üzenet</label>
+              <textarea
+                id="f-message"
+                name="message"
+                placeholder="Rövid leírás a rendezvényről, különleges kérések..."
+              ></textarea>
+            </div>
+
+            <!-- Honeypot mező: emberi felhasználók számára rejtett, botok gyakran kitöltik -->
+            <div class="form-field" style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
+              <label for="f-website">Weboldal</label>
+              <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <div id="formMessage" class="form-message" role="status" aria-live="polite"></div>
+
+            <button type="submit" class="form-submit" id="formSubmitBtn">Ajánlatot kérek</button>
+          </form>
         </div>
       </div>
     </section>

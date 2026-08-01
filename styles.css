@@ -496,6 +496,17 @@ img{max-width:100%;display:block}
   cursor:pointer;
   margin-top:6px;
 }
+.form-submit:disabled{opacity:.6;cursor:not-allowed}
+.form-message{
+  font-family:Arial,sans-serif;
+  font-size:13px;
+  line-height:1.5;
+  margin-top:6px;
+  min-height:0;
+}
+.form-message:empty{margin-top:0}
+.form-message--success{color:#3fa34d}
+.form-message--error{color:#d0483e}
 
 /* FOOTER */
 .footer{
