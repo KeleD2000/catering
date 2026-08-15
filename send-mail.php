@@ -1,162 +1,183 @@
 <?php
 /**
  * send-mail.php
- * Fogadja az ajánlatkérő űrlap adatait, és SMTP-n keresztül elküldi
- * a megadott céges e-mail címre a PHPMailer könyvtár segítségével.
+ * ------------------------------------------------------------
+ * Fogadja a cateringForm AJAX POST kérését, és a Brevo (Sendinblue)
+ * Transactional Email API-ján keresztül elküldi emailben.
  *
- * Feltöltés a tárhelyre: ezt a fájlt a PHPMailer mappával együtt
- * ugyanabba a /mail könyvtárba kell másolni, amit az űrlap
- * fetch('/mail/send-mail.php') hívása céloz.
+ * A frontend (script.js) egy JSON választ vár:
+ *   { "success": true/false, "message": "..." }
  */
-
-declare(strict_types=1);
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Csak POST kéréseket fogadunk el
+// Csak POST kérést fogadunk el
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Csak POST kérés engedélyezett.']);
     exit;
 }
 
-// ---------------------------------------------------------
-// BEÁLLÍTÁSOK — ezeket kell kitölteni a Rackforestnél kapott
-// e-mail fiók / SMTP adatokkal
-// ---------------------------------------------------------
-const SMTP_HOST       = 'live.smtp.mailtrap.io';
-const SMTP_PORT       = 587;
-const SMTP_SECURE     = 'tls';
-const SMTP_USERNAME   = 'api';
-const SMTP_PASSWORD   = 'b317abd66b12db37b93200007d00a41b';    
+$config = require __DIR__ . '/config.php';
 
-const MAIL_FROM       = 'api';      // legyen ugyanaz a domain, mint SMTP_USERNAME
-const MAIL_FROM_NAME  = 'Elefántos Catering — Weboldal';
-const MAIL_TO         = 'k.dominik2000@gmail.com';    // ide érkeznek az ajánlatkérések
-const MAIL_TO_NAME    = 'Elefántos Catering';
-// ---------------------------------------------------------
-
-require __DIR__ . '/PHPMailer/Exception.php';
-require __DIR__ . '/PHPMailer/PHPMailer.php';
-require __DIR__ . '/PHPMailer/SMTP.php';
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception as PHPMailerException;
-
-function respond(bool $success, string $message, int $httpCode = 200): void
-{
-    http_response_code($httpCode);
-    echo json_encode(['success' => $success, 'message' => $message]);
-    exit;
-}
-
-function clean(string $value): string
-{
-    return trim(strip_tags($value));
-}
-
-// Honeypot: ha ez a mező ki van töltve, valószínűleg bot küldte
-if (!empty($_POST['website'])) {
-    // A botnak "sikeresnek" mutatjuk, hogy ne próbálkozzon tovább, de nem küldünk mailt
-    respond(true, 'Köszönjük! Az ajánlatkérést elküldtük.');
-}
-
-// Kötelező mezők ellenőrzése
-$required = ['name', 'phone', 'email', 'event_type'];
-foreach ($required as $field) {
-    if (empty($_POST[$field]) || trim((string) $_POST[$field]) === '') {
-        respond(false, 'Kérjük, töltse ki az összes kötelező mezőt.', 422);
-    }
-}
-
-$name      = clean((string) $_POST['name']);
-$phone     = clean((string) $_POST['phone']);
-$email     = clean((string) $_POST['email']);
-$eventType = clean((string) $_POST['event_type']);
-$guests    = clean((string) ($_POST['guests'] ?? ''));
-$location  = clean((string) ($_POST['location'] ?? ''));
-$eventDate = clean((string) ($_POST['event_date'] ?? ''));
-$eventTime = clean((string) ($_POST['event_time'] ?? ''));
-$message   = clean((string) ($_POST['message'] ?? ''));
-
-// E-mail cím validálása
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    respond(false, 'Kérjük, adjon meg egy érvényes e-mail címet.', 422);
-}
-
-// Egyszerű hosszkorlátok a visszaélések ellen
-if (mb_strlen($name) > 150 || mb_strlen($message) > 4000) {
-    respond(false, 'A megadott adatok túl hosszúak.', 422);
-}
-
-$mail = new PHPMailer(true);
-
-try {
-    // SMTP beállítások
-    $mail->isSMTP();
-    $mail->Host       = SMTP_HOST;
-    $mail->SMTPAuth   = true;
-    $mail->Username   = SMTP_USERNAME;
-    $mail->Password   = SMTP_PASSWORD;
-    $mail->SMTPSecure = SMTP_SECURE === 'tls' ? PHPMailer::ENCRYPTION_STARTTLS : PHPMailer::ENCRYPTION_SMTPS;
-    $mail->Port       = SMTP_PORT;
-    $mail->CharSet    = 'UTF-8';
-
-    $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
-    $mail->addAddress(MAIL_TO, MAIL_TO_NAME);
-    $mail->addReplyTo($email, $name);
-
-    $mail->isHTML(true);
-    $mail->Subject = 'Új ajánlatkérés — ' . $eventType . ' (' . $name . ')';
-
-    $rows = [
-        'Név'                 => $name,
-        'Telefonszám'         => $phone,
-        'E-mail'              => $email,
-        'Rendezvény típusa'   => $eventType,
-        'Vendégek száma'      => $guests !== '' ? $guests : '—',
-        'Helyszín'            => $location !== '' ? $location : '—',
-        'Rendezvény dátuma'   => $eventDate !== '' ? $eventDate : '—',
-        'Kezdés időpontja'    => $eventTime !== '' ? $eventTime : '—',
-    ];
-
-    $htmlRows = '';
-    foreach ($rows as $label => $value) {
-        $htmlRows .= '<tr><td style="padding:6px 12px;color:#888;font-family:Arial,sans-serif;font-size:13px;">'
-            . htmlspecialchars($label, ENT_QUOTES, 'UTF-8')
-            . '</td><td style="padding:6px 12px;font-family:Arial,sans-serif;font-size:13px;">'
-            . htmlspecialchars($value, ENT_QUOTES, 'UTF-8')
-            . '</td></tr>';
-    }
-
-    $htmlMessage = nl2br(htmlspecialchars($message, ENT_QUOTES, 'UTF-8'));
-
-    $mail->Body = '
-        <div style="font-family:Arial,sans-serif;">
-            <h2 style="margin-bottom:16px;">Új ajánlatkérés érkezett a weboldalról</h2>
-            <table cellpadding="0" cellspacing="0">' . $htmlRows . '</table>
-            <h3 style="margin-top:20px;">Üzenet</h3>
-            <p>' . ($message !== '' ? $htmlMessage : '—') . '</p>
-        </div>
-    ';
-
-    $plainRows = '';
-    foreach ($rows as $label => $value) {
-        $plainRows .= $label . ': ' . $value . "\n";
-    }
-    $mail->AltBody = "Új ajánlatkérés érkezett a weboldalról\n\n" . $plainRows . "\nÜzenet:\n" . $message;
-
-    $mail->send();
-
-    respond(true, 'Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.');
-} catch (PHPMailerException $e) {
+if (empty($config['BREVO_API_KEY']) || $config['BREVO_API_KEY'] === 'IDE_MASOLD_A_BREVO_API_KULCSOT') {
     http_response_code(500);
-
-    echo json_encode([
-        'success' => false,
-        'mailError' => $mail->ErrorInfo,
-        'exception' => $e->getMessage()
-    ]);
-
+    echo json_encode(['success' => false, 'message' => 'A szerver e-mail küldése nincs beállítva. Kérjük, keressen minket telefonon.']);
     exit;
 }
+
+// ------------------------------------------------------------
+// 1) Bemenet beolvasása és tisztítása
+// ------------------------------------------------------------
+function clean($value) {
+    return trim(strip_tags((string) ($value ?? '')));
+}
+
+$name       = clean($_POST['name'] ?? '');
+$phone      = clean($_POST['phone'] ?? '');
+$email      = clean($_POST['email'] ?? '');
+$eventType  = clean($_POST['event_type'] ?? '');
+$guests     = clean($_POST['guests'] ?? '');
+$location   = clean($_POST['location'] ?? '');
+$eventDate  = clean($_POST['event_date'] ?? '');
+$eventTime  = clean($_POST['event_time'] ?? '');
+$message    = clean($_POST['message'] ?? '');
+
+// Egyszerű "honeypot" spam elleni védelem (opcionális — ha van rejtett mező a formon "website" néven)
+if (!empty($_POST['website'] ?? '')) {
+    // Botnak tűnik: hamisan sikeresnek jelezzük vissza, de nem küldünk semmit
+    echo json_encode(['success' => true, 'message' => 'Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.']);
+    exit;
+}
+
+// ------------------------------------------------------------
+// 2) Szerveroldali validáció
+// ------------------------------------------------------------
+$errors = [];
+
+if ($name === '') {
+    $errors[] = 'A név megadása kötelező.';
+}
+if ($phone === '') {
+    $errors[] = 'A telefonszám megadása kötelező.';
+}
+if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = 'Érvényes e-mail cím megadása kötelező.';
+}
+if ($eventType === '') {
+    $errors[] = 'A rendezvény típusának megadása kötelező.';
+}
+
+if (!empty($errors)) {
+    http_response_code(422);
+    echo json_encode(['success' => false, 'message' => implode(' ', $errors)]);
+    exit;
+}
+
+// ------------------------------------------------------------
+// 3) Email tartalom összeállítása
+// ------------------------------------------------------------
+function row($label, $value) {
+    if ($value === '') return '';
+    return '<tr><td style="padding:6px 12px;color:#666;font-weight:600;white-space:nowrap;">'
+        . htmlspecialchars($label) . '</td><td style="padding:6px 12px;">'
+        . nl2br(htmlspecialchars($value)) . '</td></tr>';
+}
+
+$htmlBody = '
+<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;">
+  <h2 style="color:#2b2b2b;">Új ajánlatkérés érkezett a weboldalról</h2>
+  <table style="border-collapse:collapse;width:100%;">
+    ' . row('Név', $name) . '
+    ' . row('Telefonszám', $phone) . '
+    ' . row('E-mail', $email) . '
+    ' . row('Rendezvény típusa', $eventType) . '
+    ' . row('Vendégek száma', $guests) . '
+    ' . row('Helyszín', $location) . '
+    ' . row('Dátum', $eventDate) . '
+    ' . row('Időpont', $eventTime) . '
+    ' . row('Üzenet', $message) . '
+  </table>
+</div>';
+
+$textBody = "Új ajánlatkérés érkezett a weboldalról\n\n"
+    . "Név: $name\nTelefonszám: $phone\nE-mail: $email\n"
+    . "Rendezvény típusa: $eventType\nVendégek száma: $guests\n"
+    . "Helyszín: $location\nDátum: $eventDate\nIdőpont: $eventTime\n"
+    . "Üzenet: $message\n";
+
+// ------------------------------------------------------------
+// 4) Küldés a Brevo API-n keresztül
+// ------------------------------------------------------------
+function sendBrevoEmail($apiKey, $payload) {
+    $ch = curl_init('https://api.brevo.com/v3/smtp/email');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode($payload),
+        CURLOPT_HTTPHEADER     => [
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'api-key: ' . $apiKey,
+        ],
+        CURLOPT_TIMEOUT        => 15,
+    ]);
+    $response   = curl_exec($ch);
+    $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $curlError  = curl_error($ch);
+    curl_close($ch);
+
+    return [
+        'ok'       => ($httpCode >= 200 && $httpCode < 300),
+        'httpCode' => $httpCode,
+        'body'     => $response,
+        'error'    => $curlError,
+    ];
+}
+
+// 4a) Belső értesítő email (a cégnek)
+$notifyPayload = [
+    'sender'      => ['name' => $config['FROM_NAME'], 'email' => $config['FROM_EMAIL']],
+    'to'          => [['name' => $config['TO_NAME'], 'email' => $config['TO_EMAIL']]],
+    'replyTo'     => ['name' => $name, 'email' => $email],
+    'subject'     => "Új ajánlatkérés – $eventType ($name)",
+    'htmlContent' => $htmlBody,
+    'textContent' => $textBody,
+];
+
+$result = sendBrevoEmail($config['BREVO_API_KEY'], $notifyPayload);
+
+if (!$result['ok']) {
+    error_log('Brevo email küldési hiba: HTTP ' . $result['httpCode'] . ' – ' . $result['body'] . ' – curl: ' . $result['error']);
+    http_response_code(502);
+    echo json_encode(['success' => false, 'message' => 'Hiba történt a küldés során. Kérjük, próbálja újra, vagy hívjon minket telefonon.']);
+    exit;
+}
+
+// 4b) (Opcionális) Visszaigazoló email a jelentkezőnek
+if (!empty($config['SEND_CONFIRMATION_TO_USER'])) {
+    $confirmPayload = [
+        'sender'      => ['name' => $config['FROM_NAME'], 'email' => $config['FROM_EMAIL']],
+        'to'          => [['name' => $name, 'email' => $email]],
+        'subject'     => 'Köszönjük az ajánlatkérést!',
+        'htmlContent' => '<div style="font-family:Arial,Helvetica,sans-serif;">'
+            . '<p>Kedves ' . htmlspecialchars($name) . '!</p>'
+            . '<p>Köszönjük az ajánlatkérést, hamarosan felvesszük Önnel a kapcsolatot.</p>'
+            . '<p>Üdvözlettel,<br>' . htmlspecialchars($config['TO_NAME']) . '</p>'
+            . '</div>',
+        'textContent' => "Kedves $name!\n\nKöszönjük az ajánlatkérést, hamarosan felvesszük Önnel a kapcsolatot.\n\nÜdvözlettel,\n{$config['TO_NAME']}",
+    ];
+    // Ha ez elbukik, ne buktassuk el az egész kérést — csak logoljuk
+    $confirmResult = sendBrevoEmail($config['BREVO_API_KEY'], $confirmPayload);
+    if (!$confirmResult['ok']) {
+        error_log('Brevo visszaigazoló email hiba: HTTP ' . $confirmResult['httpCode'] . ' – ' . $confirmResult['body']);
+    }
+}
+
+// ------------------------------------------------------------
+// 5) Siker
+// ------------------------------------------------------------
+echo json_encode([
+    'success' => true,
+    'message' => 'Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.',
+]);
