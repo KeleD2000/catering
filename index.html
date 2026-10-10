@@ -1,455 +1,456 @@
 <!doctype html>
 <html lang="hu">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Exclusive Catering by Elefántos – Rendezvényszervezés Pécs</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="topbar">
-        <span>Pécs, Jókai tér 6.</span>
-        <button class="theme-toggle" id="themeToggle" aria-label="Sötét/világos mód váltása" title="Sötét/világos mód váltása">
-          <span class="theme-icon theme-icon-sun">☀</span>
-          <span class="theme-icon theme-icon-moon">☾</span>
-        </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Exclusive Catering by Elefántos – Rendezvényszervezés Pécs</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="topbar">
+    <span>Pécs, Jókai tér 6.</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Sötét/világos mód váltása" title="Sötét/világos mód váltása">
+      <span class="theme-icon theme-icon-sun">☀</span>
+      <span class="theme-icon theme-icon-moon">☾</span>
+    </button>
+  </div>
+
+  <nav class="navbar">
+    <div class="logo">
+      <img
+              src="assets/logo-icon.png"
+              alt="Exclusive Catering by Elefántos"
+              class="logo-icon"
+      />
+      <div class="logo-text-wrap">
+        <div class="logo-text">Exclusive Catering</div>
+        <div class="logo-sub">by Elefántos</div>
       </div>
-
-      <nav class="navbar">
-        <div class="logo">
-          <img
-            src="assets/logo-icon.png"
-            alt="Exclusive Catering by Elefántos"
-            class="logo-icon"
-          />
-          <div class="logo-text-wrap">
-            <div class="logo-text">Exclusive Catering</div>
-            <div class="logo-sub">by Elefántos</div>
-          </div>
-        </div>
-
-        <button
-          class="nav-toggle"
-          id="navToggle"
-          aria-label="Menü megnyitása"
-          aria-expanded="false"
-        >
-          ☰
-        </button>
-
-        <ul class="nav-links" id="navLinks">
-          <li><a href="#">Főoldal</a></li>
-          <li><a href="#rolunk">Rólunk</a></li>
-          <li><a href="#szolgaltatasok">Szolgáltatások</a></li>
-          <li><a href="#galeria">Galéria</a></li>
-          <li><a href="#velemenyek">Vélemények</a></li>
-          <li><a href="#kapcsolat">Kapcsolat</a></li>
-        </ul>
-      </nav>
-    </header>
-
-    <section class="hero-section">
-      <div class="hero-left">
-        <img
-          src="assets/logo-full.png"
-          alt="Exclusive Catering by Elefántos"
-          class="hero-logo"
-        />
-        <div class="overtitle">Olasz catering Pécsett</div>
-        <h1>Tegyük <em>emlékezetessé</em><br />a rendezvényedet</h1>
-        <p>
-          1996 óta varázsoljuk Pécsre az autentikus olasz ízeket. Kiszállítással
-          akár 200 főig, saját 60 fős különteremmel – minden eseményre
-          megtaláljuk a tökéletes megoldást.
-        </p>
-        <a href="#kapcsolat" class="btn-gold">Árajánlatot kérek</a>
-        <a href="#szolgaltatasok" class="btn-ghost">Szolgáltatások</a>
-      </div>
-      <div class="hero-right">
-        <h3>Rendezvényszervezés</h3>
-        <h2>Miért válasszon minket?</h2>
-        <p>
-          Több mint 30 évnyi tapasztalattal és Nápolyból hozott tudással állunk
-          rendelkezésére minden alkalomra.
-        </p>
-        <ul>
-          <li>60 fős elegáns különterem</li>
-          <li>Kiszállítás akár 200 főig</li>
-          <li>Autentikus nápolyi pizza állomás</li>
-          <li>Személyre szabott menütervezés</li>
-          <li>Teljes körű felszerelés biztosítva</li>
-        </ul>
-        <a href="#kapcsolat" class="btn-gold">Kapcsolat felvétele</a>
-      </div>
-    </section>
-
-    <section class="about-section" id="rolunk">
-      <div class="about-text reveal">
-        <div class="overtitle">Rólunk</div>
-        <h2>30 éve <em>szenvedéllyel</em><br />az olasz gasztronómiáért</h2>
-        <p>
-          Az Elefántos története 1996-ban kezdődött Pécs belvárosában, azzal a
-          céllal, hogy a valódi, autentikus olasz konyhát hozzuk el a városba.
-          Séfjeink nápolyi tudást hoztak magukkal, amit azóta is generációkon át
-          adunk tovább – minden tésztában, szószban és pizzában ott van ez az
-          örökség.
-        </p>
-        <p>
-          Mára nem csak étteremként, hanem megbízható rendezvényszervező
-          partnerként is ismernek minket Pécsett és környékén. Legyen szó céges
-          gálavacsoráról, esküvőről vagy családi ünnepségről, csapatunk a
-          tervezéstől a kiszolgálásig végigkíséri az eseményt.
-        </p>
-        <ul class="about-values">
-          <li>Autentikus nápolyi receptek</li>
-          <li>Friss, helyi alapanyagok</li>
-          <li>Tapasztalt rendezvénycsapat</li>
-          <li>Egyedi menütervezés</li>
-        </ul>
-      </div>
-      <div class="about-stats">
-        <div class="stat-card reveal reveal-delay-1">
-          <span class="stat-number" data-target="30" data-suffix="+">0</span>
-          <span class="stat-label">Év tapasztalat</span>
-        </div>
-        <div class="stat-card reveal reveal-delay-2">
-          <span class="stat-number" data-target="1200" data-suffix="+">0</span>
-          <span class="stat-label">Megvalósult rendezvény</span>
-        </div>
-        <div class="stat-card reveal reveal-delay-3">
-          <span class="stat-number" data-target="200" data-suffix="">0</span>
-          <span class="stat-label">Fős maximum kiszállítás</span>
-        </div>
-        <div class="stat-card reveal reveal-delay-1">
-          <span class="stat-number" data-target="98" data-suffix="%">0</span>
-          <span class="stat-label">Elégedett vendég</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-dark" id="szolgaltatasok">
-      <div class="section-header reveal">
-        <div class="overtitle">Ajánlataink</div>
-        <h2>Szolgáltatások</h2>
-        <p>
-          Minden rendezvényhez megtaláljuk a legmegfelelőbb megoldást – büfétől
-          a prémium bankettig.
-        </p>
-      </div>
-      <div class="packages-row">
-        <div class="pkg reveal reveal-delay-1">
-          <h3>Grill</h3>
-          <div class="pkg-desc">
-            Könnyű fogások, friss saláták, olasz előételek önkiszolgáló formában
-          </div>
-          <ul class="pkg-list">
-            <li>Hideg és meleg előételek</li>
-            <li>Friss saláták, bruschetta</li>
-            <li>Felszerelés biztosítva</li>
-            <li>Kiszállítás Pécs területén</li>
-          </ul>
-          <a href="#kapcsolat" class="btn-ghost">Részletek</a>
-        </div>
-
-        <div class="pkg featured reveal reveal-delay-2">
-          <h3>Pizzás rendezvény</h3>
-          <div class="pkg-desc">
-            Teljes körű étkeztetés, főételek, desszertek, nápolyi pizza állomás
-          </div>
-          <ul class="pkg-list">
-            <li>3 fogásos olasz menü</li>
-            <li>Nápolyi pizza állomás</li>
-            <li>Felszolgáló személyzet</li>
-            <li>Ital csomag</li>
-            <li>Teljes felszerelés</li>
-          </ul>
-          <a href="#kapcsolat" class="btn-gold">Árajánlatot kérek</a>
-        </div>
-
-        <div class="pkg reveal reveal-delay-3">
-          <h3>Bankett vacsora</h3>
-          <div class="pkg-desc">
-            Ültetős, több fogásos vacsora exkluzív rendezvényekre, séf-válogatta
-            menüsorral
-          </div>
-          <ul class="pkg-list">
-            <li>Ültetéses vacsora, terítékkel</li>
-            <li>Több fogásos menü</li>
-            <li>Felszolgáló személyzet</li>
-            <li>Prémium ital csomag</li>
-            <li>Egyedi menütervezés</li>
-          </ul>
-          <a href="#kapcsolat" class="btn-ghost">Részletek</a>
-        </div>
-
-        <div class="pkg reveal reveal-delay-3">
-          <h3>Hideg tálak</h3>
-          <div class="pkg-desc">
-            Válogatott hideg tálak nagyobb létszámú fogadásokhoz, elegáns
-            tálalásban
-          </div>
-          <ul class="pkg-list">
-            <li>Válogatott hideg tálak</li>
-            <li>Büféasztal kialakítás</li>
-            <li>Rugalmas létszám és időpont</li>
-            <li>Felszerelés biztosítva</li>
-            <li>Kiszállítás Pécs területén</li>
-          </ul>
-          <a href="#kapcsolat" class="btn-ghost">Részletek</a>
-        </div>
-
-        <div class="pkg reveal reveal-delay-3">
-          <h3>Céges rendezvény</h3>
-          <div class="pkg-desc">
-            Testre szabott catering céges eseményekre, konferenciáktól a
-            csapatépítőkig
-          </div>
-          <ul class="pkg-list">
-            <li>Rugalmas menüösszeállítás</li>
-            <li>Reggeli és ebéd csomagok</li>
-            <li>Helyszíni kiszolgálás igény esetén</li>
-            <li>Kiszállítás Pécs területén</li>
-            <li>Számlázás céges igényekre szabva</li>
-          </ul>
-          <a href="#kapcsolat" class="btn-ghost">Részletek</a>
-        </div>
-
-        <div class="pkg pkg-soon reveal reveal-delay-3">
-          <span class="pkg-badge">Hamarosan</span>
-          <h3>Esküvő</h3>
-          <div class="pkg-desc">
-            Álomesküvőhöz illő menüsor, séffel egyeztetett fogásokkal és
-            stílusos tálalással
-          </div>
-          <ul class="pkg-list">
-            <li>Személyes séf helyszínen</li>
-            <li>Egyedi menütervezés</li>
-            <li>Fehér kesztyűs felszolgálás</li>
-            <li>Prémium ital csomag</li>
-            <li>Dekoráció koordináció</li>
-          </ul>
-          <a
-            href="#kapcsolat"
-            class="btn-ghost btn-disabled"
-            onclick="return false;"
-            >Hamarosan elérhető</a
-          >
-        </div>
-      </div>
-    </section>
-
-    <section class="section-mid reveal" id="galeria">
-      <div class="section-header">
-        <div class="overtitle">Galéria</div>
-        <h2>Rendezvényeinkből</h2>
-        <p>
-          Valódi fotókkal feltöltve még látványosabb lesz – cseréld le a háttér
-          div-eket &lt;img&gt; tagekre!
-        </p>
-      </div>
-      <div class="gallery-grid">
-        <div class="gal-cell gal-big">
-          <div class="gal-icon">🍽</div>
-          <div class="gal-label">Bankett</div>
-          <div class="gal-title">Céges esti rendezvény</div>
-        </div>
-        <div class="gal-cell">
-          <div class="gal-icon">🍕</div>
-          <div class="gal-label">Pizza állomás</div>
-          <div class="gal-title">Nápolyi élmény</div>
-        </div>
-        <div class="gal-cell">
-          <div class="gal-icon">💍</div>
-          <div class="gal-label">Esküvő</div>
-          <div class="gal-title">Különterem</div>
-        </div>
-      </div>
-      <div class="gallery-grid2">
-        <div class="gal-cell">
-          <div class="gal-icon">🥂</div>
-          <div class="gal-label">Koktélbüfé</div>
-          <div class="gal-title">Fogadás</div>
-        </div>
-        <div class="gal-cell">
-          <div class="gal-icon">🍰</div>
-          <div class="gal-label">Desszert</div>
-          <div class="gal-title">Tiramisu &amp; dolce</div>
-        </div>
-        <div class="gal-cell">
-          <div class="gal-icon">🏢</div>
-          <div class="gal-label">Konferencia</div>
-          <div class="gal-title">Munkahelyi catering</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-dark" id="velemenyek">
-      <div class="section-header reveal">
-        <div class="overtitle">Vélemények</div>
-        <h2>Mit mondanak vendégeink</h2>
-      </div>
-      <div class="reviews-row">
-        <div class="review reveal reveal-delay-1">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">
-            "A céges karácsonyi vacsoránk feledhetetlen volt. A pizza és a
-            tiramisu mindenkit lenyűgözött – az egész csapat el volt
-            ragadtatva."
-          </div>
-          <div class="review-author">Kovács Márton</div>
-          <div class="review-event">Céges bankett, 80 fő</div>
-        </div>
-        <div class="review reveal reveal-delay-2">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">
-            "Esküvőnkre választottuk az Elefántost – pontosak, figyelmesek, és
-            az ételek tökéletesek voltak. Minden vendégünk megkérdezte, ki a
-            caterer."
-          </div>
-          <div class="review-author">Szabó Vivien</div>
-          <div class="review-event">Esküvői catering, 120 fő</div>
-        </div>
-        <div class="review reveal reveal-delay-3">
-          <div class="review-stars">★★★★★</div>
-          <div class="review-text">
-            "30 éves tapasztalat megmutatkozik minden tányéron. Profi csapat,
-            autentikus olasz ízek – teljes szívből ajánlom."
-          </div>
-          <div class="review-author">Nagy Péter</div>
-          <div class="review-event">Születésnap, 45 fő</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="contact-section reveal" id="kapcsolat">
-      <div class="contact-grid">
-        <div class="contact-left">
-          <div class="overtitle">Kapcsolat</div>
-          <h2>Szervezzük meg együtt</h2>
-          <p>
-            Vegyük fel a kapcsolatot és egyedi ajánlatot készítünk
-            rendezvényéhez. Munkatársaink rövid időn belül visszahívják.
-          </p>
-          <div class="contact-item">
-            <div class="contact-icon">📞</div>
-            <div>
-              <div class="contact-label">Rendezvényszervezés</div>
-              <div class="contact-val">+36 20 547 6062</div>
-            </div>
-          </div>
-          <div class="contact-item">
-            <div class="contact-icon">✉</div>
-            <div>
-              <div class="contact-label">E-mail</div>
-              <div class="contact-val">catering@elefantos.hu</div>
-            </div>
-          </div>
-          <div class="contact-item">
-            <div class="contact-icon">📍</div>
-            <div>
-              <div class="contact-label">Étterem</div>
-              <div class="contact-val">7621 Pécs, Jókai tér 6.</div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <form id="cateringForm" class="catering-form" novalidate>
-            <div class="form-row">
-              <div class="form-field">
-                <label for="f-name">Neve</label>
-                <input id="f-name" name="name" type="text" placeholder="Teljes neve" required />
-              </div>
-              <div class="form-field">
-                <label for="f-phone">Telefonszám</label>
-                <input id="f-phone" name="phone" type="tel" placeholder="+36 ..." required />
-              </div>
-            </div>
-            <div class="form-field">
-              <label for="f-email">E-mail cím</label>
-              <input id="f-email" name="email" type="email" placeholder="email@pelda.hu" required />
-            </div>
-            <div class="form-row">
-              <div class="form-field">
-                <label for="f-type">Rendezvény típusa</label>
-                <select id="f-type" name="event_type" required>
-                  <option value="">Válasszon...</option>
-                  <option>Grill</option>
-                  <option>Pizzás rendezvény</option>
-                  <option>Bankett vacsora</option>
-                  <option>Hideg tálak</option>
-                  <option>Céges rendezvények</option>
-                  <option>Esküvő</option>
-                </select>
-              </div>
-              <div class="form-field">
-                <label for="f-guests">Vendégek száma</label>
-                <input id="f-guests" name="guests" type="number" min="1" placeholder="pl. 80" />
-              </div>
-            </div>
-            <div class="form-field">
-              <label for="f-location">Helyszín</label>
-              <input
-                id="f-location"
-                name="location"
-                type="text"
-                placeholder="Rendezvény helyszíne (cím vagy terem neve)"
-              />
-            </div>
-            <div class="form-row">
-              <div class="form-field">
-                <label for="f-date">Rendezvény dátuma</label>
-                <input id="f-date" name="event_date" type="date" />
-              </div>
-              <div class="form-field">
-                <label for="f-time">Kezdés időpontja</label>
-                <input id="f-time" name="event_time" type="time" />
-              </div>
-            </div>
-            <div class="form-field">
-              <label for="f-message">Üzenet</label>
-              <textarea
-                id="f-message"
-                name="message"
-                placeholder="Rövid leírás a rendezvényről, különleges kérések..."
-              ></textarea>
-            </div>
-
-            <!-- Honeypot mező: emberi felhasználók számára rejtett, botok gyakran kitöltik -->
-            <div class="form-field" style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
-              <label for="f-website">Weboldal</label>
-              <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
-            </div>
-
-            <div id="formMessage" class="form-message" role="status" aria-live="polite"></div>
-
-            <button type="submit" class="form-submit" id="formSubmitBtn">Ajánlatot kérek</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div>
-        <h4>Exclusive Catering</h4>
-        <p>
-          by Elefántos<br />1996 óta Pécs belvárosában.<br />Autentikus olasz
-          konyha.
-        </p>
-      </div>
-      <div>
-        <h4>Navigáció</h4>
-        <a href="#">Főoldal</a>
-        <a href="#rolunk">Rólunk</a>
-        <a href="#szolgaltatasok">Szolgáltatások</a>
-        <a href="#galeria">Galéria</a>
-        <a href="#velemenyek">Vélemények</a>
-        <a href="#kapcsolat">Kapcsolat</a>
-      </div>
-    </footer>
-    <div class="footer-bottom">
-      © 2026 Elefántos Pizzéria &amp; Catering · Minden jog fenntartva
     </div>
-    <script src="script.js"></script>
-  </body>
+
+    <button
+            class="nav-toggle"
+            id="navToggle"
+            aria-label="Menü megnyitása"
+            aria-expanded="false"
+    >
+      ☰
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">Főoldal</a></li>
+      <li><a href="#rolunk">Rólunk</a></li>
+      <li><a href="#szolgaltatasok">Szolgáltatások</a></li>
+      <li><a href="#galeria">Galéria</a></li>
+      <li><a href="#velemenyek">Vélemények</a></li>
+      <li><a href="#kapcsolat">Kapcsolat</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero-section">
+  <div class="hero-left">
+    <img
+            src="assets/logo-full.png"
+            alt="Exclusive Catering by Elefántos"
+            class="hero-logo"
+    />
+    <div class="overtitle">Olasz catering Pécsett</div>
+    <h1>Tegyük <em>emlékezetessé</em><br />a rendezvényedet</h1>
+    <p>
+      1996 óta varázsoljuk Pécsre az autentikus olasz ízeket. Kiszállítással
+      akár 200 főig, saját 60 fős különteremmel – minden eseményre
+      megtaláljuk a tökéletes megoldást.
+    </p>
+    <a href="#kapcsolat" class="btn-gold">Árajánlatot kérek</a>
+    <a href="#szolgaltatasok" class="btn-ghost">Szolgáltatások</a>
+  </div>
+  <div class="hero-right">
+    <h3>Rendezvényszervezés</h3>
+    <h2>Miért válasszon minket?</h2>
+    <p>
+      Több mint 30 évnyi tapasztalattal és Nápolyból hozott tudással állunk
+      rendelkezésére minden alkalomra.
+    </p>
+    <ul>
+      <li>60 fős elegáns különterem</li>
+      <li>Kiszállítás akár 200 főig</li>
+      <li>Autentikus nápolyi pizza állomás</li>
+      <li>Személyre szabott menütervezés</li>
+      <li>Teljes körű felszerelés biztosítva</li>
+    </ul>
+    <a href="#kapcsolat" class="btn-gold">Kapcsolat felvétele</a>
+  </div>
+</section>
+
+<section class="about-section" id="rolunk">
+  <div class="about-text reveal">
+    <div class="overtitle">Rólunk</div>
+    <h2>30 éve <em>szenvedéllyel</em><br />az olasz gasztronómiáért</h2>
+    <p>
+      Az Elefántos története 1996-ban kezdődött Pécs belvárosában, azzal a
+      céllal, hogy a valódi, autentikus olasz konyhát hozzuk el a városba.
+      Séfjeink nápolyi tudást hoztak magukkal, amit azóta is generációkon át
+      adunk tovább – minden tésztában, szószban és pizzában ott van ez az
+      örökség.
+    </p>
+    <p>
+      Mára nem csak étteremként, hanem megbízható rendezvényszervező
+      partnerként is ismernek minket Pécsett és környékén. Legyen szó céges
+      gálavacsoráról, esküvőről vagy családi ünnepségről, csapatunk a
+      tervezéstől a kiszolgálásig végigkíséri az eseményt.
+    </p>
+    <ul class="about-values">
+      <li>Autentikus nápolyi receptek</li>
+      <li>Friss, helyi alapanyagok</li>
+      <li>Tapasztalt rendezvénycsapat</li>
+      <li>Egyedi menütervezés</li>
+    </ul>
+  </div>
+  <div class="about-stats">
+    <div class="stat-card reveal reveal-delay-1">
+      <span class="stat-number" data-target="30" data-suffix="+">0</span>
+      <span class="stat-label">Év tapasztalat</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-2">
+      <span class="stat-number" data-target="1200" data-suffix="+">0</span>
+      <span class="stat-label">Megvalósult rendezvény</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-3">
+      <span class="stat-number" data-target="200" data-suffix="">0</span>
+      <span class="stat-label">Fős maximum kiszállítás</span>
+    </div>
+    <div class="stat-card reveal reveal-delay-1">
+      <span class="stat-number" data-target="98" data-suffix="%">0</span>
+      <span class="stat-label">Elégedett vendég</span>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark" id="szolgaltatasok">
+  <div class="section-header reveal">
+    <div class="overtitle">Ajánlataink</div>
+    <h2>Szolgáltatások</h2>
+    <p>
+      Minden rendezvényhez megtaláljuk a legmegfelelőbb megoldást – büfétől
+      a prémium bankettig.
+    </p>
+  </div>
+  <div class="packages-row">
+    <div class="pkg reveal reveal-delay-1">
+      <video src="assets/grill/IMG_3846.mp4" class="pkg-img" autoplay muted loop playsinline preload="metadata" aria-label="Grill rendezvény"></video>
+      <h3>Grill</h3>
+      <div class="pkg-desc">
+        Könnyű fogások, friss saláták, olasz előételek önkiszolgáló formában
+      </div>
+      <ul class="pkg-list">
+        <li>Hideg és meleg előételek</li>
+        <li>Friss saláták, bruschetta</li>
+        <li>Felszerelés biztosítva</li>
+        <li>Kiszállítás Pécs területén</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+
+    <div class="pkg reveal reveal-delay-1">
+      <img src="assets/pizzak/IMG_5733.jpeg" alt="Nápolyi pizza állomás rendezvényen" class="pkg-img" loading="lazy" />
+
+      <h3>Pizzás rendezvény</h3>
+      <div class="pkg-desc">
+        Teljes körű étkeztetés, főételek, desszertek, nápolyi pizza állomás
+      </div>
+      <ul class="pkg-list">
+        <li>3 fogásos olasz menü</li>
+        <li>Nápolyi pizza állomás</li>
+        <li>Felszolgáló személyzet</li>
+        <li>Ital csomag</li>
+        <li>Teljes felszerelés</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+
+    <div class="pkg reveal reveal-delay-3">
+      <img src="assets/bankett/IMG_3048.jpeg" alt="Bankett vacsora terített asztalokkal" class="pkg-img" loading="lazy" />
+      <h3>Bankett vacsora</h3>
+      <div class="pkg-desc">
+        Ültetős, több fogásos vacsora exkluzív rendezvényekre, séf-válogatta
+        menüsorral
+      </div>
+      <ul class="pkg-list">
+        <li>Ültetéses vacsora, terítékkel</li>
+        <li>Több fogásos menü</li>
+        <li>Felszolgáló személyzet</li>
+        <li>Prémium ital csomag</li>
+        <li>Egyedi menütervezés</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+
+    <div class="pkg reveal reveal-delay-3">
+      <img src="assets/bankett/IMG_3522.jpeg" alt="Válogatott hideg tálak és előételek" class="pkg-img" loading="lazy" />
+      <h3>Hideg tálak</h3>
+      <div class="pkg-desc">
+        Válogatott hideg tálak nagyobb létszámú fogadásokhoz, elegáns
+        tálalásban
+      </div>
+      <ul class="pkg-list">
+        <li>Válogatott hideg tálak</li>
+        <li>Büféasztal kialakítás</li>
+        <li>Rugalmas létszám és időpont</li>
+        <li>Felszerelés biztosítva</li>
+        <li>Kiszállítás Pécs területén</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+
+    <div class="pkg reveal reveal-delay-3">
+      <img src="assets/bankett/IMG_5836.jpeg" alt="Céges rendezvény catering" class="pkg-img" loading="lazy" />
+      <h3>Céges rendezvény</h3>
+      <div class="pkg-desc">
+        Testre szabott catering céges eseményekre, konferenciáktól a
+        csapatépítőkig
+      </div>
+      <ul class="pkg-list">
+        <li>Rugalmas menüösszeállítás</li>
+        <li>Reggeli és ebéd csomagok</li>
+        <li>Helyszíni kiszolgálás igény esetén</li>
+        <li>Kiszállítás Pécs területén</li>
+        <li>Számlázás céges igényekre szabva</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+
+    <div class="pkg pkg-soon reveal reveal-delay-3">
+      <video src="assets/eskuvo/IMG_5973.mp4" class="pkg-img" autoplay muted loop playsinline preload="metadata" aria-label="Esküvő"></video>
+      <h3>Esküvő</h3>
+      <div class="pkg-desc">
+        Álomesküvőhöz illő menüsor, séffel egyeztetett fogásokkal és
+        stílusos tálalással
+      </div>
+      <ul class="pkg-list">
+        <li>Személyes séf helyszínen</li>
+        <li>Egyedi menütervezés</li>
+        <li>Fehér kesztyűs felszolgálás</li>
+        <li>Prémium ital csomag</li>
+        <li>Dekoráció koordináció</li>
+      </ul>
+      <a href="#kapcsolat" class="btn-ghost">Részletek</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-mid reveal" id="galeria">
+  <div class="section-header">
+    <div class="overtitle">Galéria</div>
+    <h2>Rendezvényeinkből</h2>
+    <p>
+      Pillanatképek a korábbi rendezvényeinkről – bankettektől az
+      esküvőkig.
+    </p>
+  </div>
+  <div class="gallery-grid">
+    <div class="gal-cell gal-big">
+      <img src="assets/bankett/IMG_3114.jpeg" alt="Céges esti bankett" loading="lazy" />
+      <div class="gal-label">Bankett</div>
+      <div class="gal-title">Céges esti rendezvény</div>
+    </div>
+    <div class="gal-cell">
+      <img src="assets/pizzak/0031_Dobos_Attila_fotografia_DAN01743.JPEG" alt="Nápolyi pizza állomás" loading="lazy" />
+      <div class="gal-label">Pizza állomás</div>
+      <div class="gal-title">Nápolyi élmény</div>
+    </div>
+    <div class="gal-cell">
+      <img src="assets/eskuvo/IMG_5981.jpeg" alt="Esküvői különterem" loading="lazy" />
+      <div class="gal-label">Esküvő</div>
+      <div class="gal-title">Különterem</div>
+    </div>
+  </div>
+  <div class="gallery-grid2">
+    <div class="gal-cell">
+      <video src="assets/hidegtalak/IMG_3058.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Hideg tálak"></video>
+      <div class="gal-label">Hideg előételek</div>
+      <div class="gal-title">Elegáns tálalás</div>
+    </div>
+    <div class="gal-cell">
+      <video src="assets/grill/IMG_3846.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Grill rendezvény"></video>
+      <div class="gal-label">Grill</div>
+      <div class="gal-title">Szabadtéri rendezvény</div>
+    </div>
+    <div class="gal-cell">
+      <video src="assets/bankett/IMG_3098.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Büfé fogások"></video>
+      <div class="gal-label">Büfé</div>
+      <div class="gal-title">Bőséges választék</div>
+    </div>
+  </div>
+</section>
+
+<section class="section-dark" id="velemenyek">
+  <div class="section-header reveal">
+    <div class="overtitle">Vélemények</div>
+    <h2>Mit mondanak vendégeink</h2>
+  </div>
+  <div class="reviews-row">
+    <div class="review reveal reveal-delay-1">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">
+        "A céges karácsonyi vacsoránk feledhetetlen volt. A pizza és a
+        tiramisu mindenkit lenyűgözött – az egész csapat el volt
+        ragadtatva."
+      </div>
+      <div class="review-author">Kovács Márton</div>
+      <div class="review-event">Céges bankett, 80 fő</div>
+    </div>
+    <div class="review reveal reveal-delay-2">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">
+        "Esküvőnkre választottuk az Elefántost – pontosak, figyelmesek, és
+        az ételek tökéletesek voltak. Minden vendégünk megkérdezte, ki a
+        caterer."
+      </div>
+      <div class="review-author">Szabó Vivien</div>
+      <div class="review-event">Esküvői catering, 120 fő</div>
+    </div>
+    <div class="review reveal reveal-delay-3">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">
+        "30 éves tapasztalat megmutatkozik minden tányéron. Profi csapat,
+        autentikus olasz ízek – teljes szívből ajánlom."
+      </div>
+      <div class="review-author">Nagy Péter</div>
+      <div class="review-event">Születésnap, 45 fő</div>
+    </div>
+  </div>
+</section>
+
+<section class="contact-section reveal" id="kapcsolat">
+  <div class="contact-grid">
+    <div class="contact-left">
+      <div class="overtitle">Kapcsolat</div>
+      <h2>Szervezzük meg együtt</h2>
+      <p>
+        Vegyük fel a kapcsolatot és egyedi ajánlatot készítünk
+        rendezvényéhez. Munkatársaink rövid időn belül visszahívják.
+      </p>
+      <div class="contact-item">
+        <div class="contact-icon">📞</div>
+        <div>
+          <div class="contact-label">Rendezvényszervezés</div>
+          <div class="contact-val">+36 20 547 6062</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">✉</div>
+        <div>
+          <div class="contact-label">E-mail</div>
+          <div class="contact-val">catering@elefantos.hu</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📍</div>
+        <div>
+          <div class="contact-label">Étterem</div>
+          <div class="contact-val">7621 Pécs, Jókai tér 6.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <form id="cateringForm" class="catering-form" novalidate>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="f-name">Neve</label>
+            <input id="f-name" name="name" type="text" placeholder="Teljes neve" required />
+          </div>
+          <div class="form-field">
+            <label for="f-phone">Telefonszám</label>
+            <input id="f-phone" name="phone" type="tel" placeholder="+36 ..." required />
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="f-email">E-mail cím</label>
+          <input id="f-email" name="email" type="email" placeholder="email@pelda.hu" required />
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="f-type">Rendezvény típusa</label>
+            <select id="f-type" name="event_type" required>
+              <option value="">Válasszon...</option>
+              <option>Grill</option>
+              <option>Pizzás rendezvény</option>
+              <option>Bankett vacsora</option>
+              <option>Hideg tálak</option>
+              <option>Céges rendezvények</option>
+              <option>Esküvő</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="f-guests">Vendégek száma</label>
+            <input id="f-guests" name="guests" type="number" min="1" placeholder="pl. 80" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="f-location">Helyszín</label>
+          <input
+                  id="f-location"
+                  name="location"
+                  type="text"
+                  placeholder="Rendezvény helyszíne (cím vagy terem neve)"
+          />
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label for="f-date">Rendezvény dátuma</label>
+            <input id="f-date" name="event_date" type="date" />
+          </div>
+          <div class="form-field">
+            <label for="f-time">Kezdés időpontja</label>
+            <input id="f-time" name="event_time" type="time" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="f-message">Üzenet</label>
+          <textarea
+                  id="f-message"
+                  name="message"
+                  placeholder="Rövid leírás a rendezvényről, különleges kérések..."
+          ></textarea>
+        </div>
+
+        <!-- Honeypot mező: emberi felhasználók számára rejtett, botok gyakran kitöltik -->
+        <div class="form-field" style="position:absolute; left:-9999px; top:-9999px;" aria-hidden="true">
+          <label for="f-website">Weboldal</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div id="formMessage" class="form-message" role="status" aria-live="polite"></div>
+
+        <button type="submit" class="form-submit" id="formSubmitBtn">Ajánlatot kérek</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div>
+    <h4>Exclusive Catering</h4>
+    <p>
+      by Elefántos<br />1996 óta Pécs belvárosában.<br />Autentikus olasz
+      konyha.
+    </p>
+  </div>
+  <div>
+    <h4>Navigáció</h4>
+    <a href="#">Főoldal</a>
+    <a href="#rolunk">Rólunk</a>
+    <a href="#szolgaltatasok">Szolgáltatások</a>
+    <a href="#galeria">Galéria</a>
+    <a href="#velemenyek">Vélemények</a>
+    <a href="#kapcsolat">Kapcsolat</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  © 2026 Elefántos Pizzéria &amp; Catering · Minden jog fenntartva
+</div>
+<script src="script.js"></script>
+</body>
 </html>

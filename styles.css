@@ -358,8 +358,22 @@ img{max-width:100%;display:block}
   gap:2px;
   background:var(--bg-grid-line);
 }
-.pkg{background:var(--bg-pkg);padding:36px 28px;transition:background-color .3s ease}
+.pkg{background:var(--bg-pkg);padding:36px 28px;border-top:3px solid transparent;transition:background-color .3s ease;display:flex;flex-direction:column}
+.pkg > a:last-child{margin-top:auto}
 .pkg.featured{background:var(--bg-pkg-featured);border-top:3px solid var(--gold)}
+.pkg-img{
+  display:block;
+  width:calc(100% + 56px);
+  max-width:none;
+  height:auto;
+  aspect-ratio:3/2;
+  max-height:340px;
+  object-fit:cover;
+  object-position:center center;
+  flex-shrink:0;
+  margin:-36px -28px 24px;
+  background:var(--bg-gal-cell);
+}
 .pkg-tag{font-family:Arial,sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:block}
 .pkg h3{font-size:22px;font-weight:400;color:var(--text-heading);margin-bottom:8px}
 .pkg-desc{font-family:Arial,sans-serif;font-size:13px;color:var(--text-muted);margin-bottom:24px;line-height:1.6}
@@ -386,21 +400,27 @@ img{max-width:100%;display:block}
   margin-top:10px;
 }
 
-/* GALLERY */
-.gallery-grid{
+/* GALLERY – bento elrendezés (a két régi konténer "átlátszó", a cellák egy közös rácsba kerülnek) */
+#galeria{
+  --gal-gap:12px;
+  --gal-row:clamp(150px,17vw,230px);
   display:grid;
-  grid-template-columns:2fr 1fr;
-  grid-template-rows:200px 200px;
-  gap:2px;
-  background:var(--bg-grid-line);
-  margin-bottom:2px;
+  grid-template-columns:repeat(4,1fr);
+  grid-template-rows:auto;
+  grid-auto-rows:var(--gal-row);
+  gap:var(--gal-gap);
 }
-.gallery-grid2{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:2px;
-  background:var(--bg-grid-line);
-}
+#galeria .section-header{grid-column:1/-1}
+.gallery-grid,.gallery-grid2{display:contents}
+
+/* Asztali elrendezés: nagy + kicsi + magas, alatta két széles */
+.gallery-grid  > .gal-cell:nth-child(1){grid-column:1/3;grid-row:2/4}
+.gallery-grid  > .gal-cell:nth-child(2){grid-column:3;grid-row:2}
+.gallery-grid  > .gal-cell:nth-child(3){grid-column:4;grid-row:2/4}
+.gallery-grid2 > .gal-cell:nth-child(1){grid-column:3;grid-row:3}
+.gallery-grid2 > .gal-cell:nth-child(2){grid-column:1/3;grid-row:4}
+.gallery-grid2 > .gal-cell:nth-child(3){grid-column:3/5;grid-row:4}
+
 .gal-cell{
   background:var(--bg-gal-cell);
   display:flex;
@@ -409,18 +429,22 @@ img{max-width:100%;display:block}
   padding:20px;
   position:relative;
   overflow:hidden;
-  min-height:160px;
+  min-height:0;
   transition:background-color .3s ease;
 }
-.gal-cell img{
+.gal-cell img,
+.gal-cell video{
   position:absolute;
   inset:0;
   width:100%;
   height:100%;
   object-fit:cover;
+  object-position:center center;
   opacity:.55;
+  transition:transform .6s ease, opacity .4s ease;
 }
-.gal-big{grid-row:1/3}
+.gal-cell:hover img,
+.gal-cell:hover video{transform:scale(1.05);opacity:.8}
 .gal-icon{
   position:absolute;
   top:50%;
@@ -574,7 +598,7 @@ img{max-width:100%;display:block}
   .section-dark,.section-mid,.contact-section{padding:56px 24px}
   .about-section{padding:64px 24px}
   .packages-row,.reviews-row{grid-template-columns:repeat(2,1fr)}
-  .pkg:last-child,.review:last-child{grid-column:1/-1}
+  .review:last-child{grid-column:1/-1}
 }
 
 /* Mobile (≤ 768px) */
@@ -654,13 +678,22 @@ img{max-width:100%;display:block}
 
   /* Packages & Reviews stack */
   .packages-row,.reviews-row{grid-template-columns:1fr}
-  .pkg:last-child,.review:last-child{grid-column:auto}
+  .review:last-child{grid-column:auto}
 
   /* Gallery stacks */
-  .gallery-grid{grid-template-columns:1fr;grid-template-rows:auto}
-  .gal-big{grid-row:auto}
-  .gallery-grid2{grid-template-columns:1fr}
-  .gal-cell{min-height:140px}
+  #galeria{
+    --gal-gap:8px;
+    --gal-row:clamp(140px,40vw,200px);
+    grid-template-columns:repeat(2,1fr);
+  }
+  .gallery-grid  > .gal-cell:nth-child(1){grid-column:1/3;grid-row:2/4}
+  .gallery-grid  > .gal-cell:nth-child(2){grid-column:1;grid-row:4}
+  .gallery-grid  > .gal-cell:nth-child(3){grid-column:2;grid-row:4}
+  .gallery-grid2 > .gal-cell:nth-child(1){grid-column:1/3;grid-row:5}
+  .gallery-grid2 > .gal-cell:nth-child(2){grid-column:1;grid-row:6}
+  .gallery-grid2 > .gal-cell:nth-child(3){grid-column:2;grid-row:6}
+  .gal-cell{padding:14px}
+  .pkg-img{max-height:300px}
 
   /* Contact form stacks */
   .contact-grid{grid-template-columns:1fr;gap:40px}
@@ -678,28 +711,4 @@ img{max-width:100%;display:block}
   .review-text{font-size:14px}
   .stat-number{font-size:30px}
   .about-stats{grid-template-columns:1fr 1fr}
-}
-
-/* HAMAROSAN CSOMAG */
-.pkg-soon{
-  position:relative;
-  opacity:.6;
-}
-.pkg-badge{
-  position:absolute;
-  top:16px;
-  right:16px;
-  background:var(--gold);
-  color:var(--btn-gold-text);
-  font-family:Arial,sans-serif;
-  font-size:10px;
-  font-weight:700;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  padding:5px 10px;
-}
-.pkg-soon .btn-disabled{
-  cursor:not-allowed;
-  opacity:.7;
-  pointer-events:none;
 }
