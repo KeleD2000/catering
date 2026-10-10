@@ -153,3 +153,68 @@ if (cateringForm) {
     }
   });
 }
+
+// ============================
+// "Rólunk" popup (dialog) – animált nyitás/zárás
+// ============================
+const aboutModal = document.getElementById('aboutModal');
+const aboutOpenBtn = document.getElementById('aboutOpenBtn');
+
+if (aboutModal && aboutOpenBtn) {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let isClosing = false;
+
+  function openAboutModal() {
+    aboutModal.classList.remove('is-closing');
+    aboutModal.showModal();
+    document.body.classList.add('modal-open');
+  }
+
+  function closeAboutModal() {
+    if (!aboutModal.open || isClosing) return;
+
+    if (prefersReducedMotion.matches) {
+      aboutModal.close();
+      return;
+    }
+
+    isClosing = true;
+    aboutModal.classList.add('is-closing');
+
+    const finish = () => {
+      if (!isClosing) return;
+      isClosing = false;
+      aboutModal.classList.remove('is-closing');
+      aboutModal.close();
+    };
+
+    aboutModal.addEventListener('animationend', (e) => {
+      if (e.target === aboutModal) finish();
+    }, { once: true });
+
+    // Biztonsági tartalék, ha az animationend valamiért nem fut le
+    setTimeout(finish, 400);
+  }
+
+  aboutOpenBtn.addEventListener('click', openAboutModal);
+
+  aboutModal.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', closeAboutModal);
+  });
+
+  // Háttérre (a doboz mellé) kattintva is bezárul
+  aboutModal.addEventListener('click', (e) => {
+    if (e.target === aboutModal) closeAboutModal();
+  });
+
+  // Esc: a böngésző alap (azonnali) bezárása helyett animáltan zárjuk
+  aboutModal.addEventListener('cancel', (e) => {
+    e.preventDefault();
+    closeAboutModal();
+  });
+
+  // Bezáráskor visszaáll a görgetés
+  aboutModal.addEventListener('close', () => {
+    document.body.classList.remove('modal-open');
+  });
+}

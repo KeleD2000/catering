@@ -712,3 +712,123 @@ img{max-width:100%;display:block}
   .stat-number{font-size:30px}
   .about-stats{grid-template-columns:1fr 1fr}
 }
+
+/* HAMAROSAN CSOMAG */
+.pkg-soon{
+  position:relative;
+  opacity:.6;
+}
+.pkg-badge{
+  position:absolute;
+  top:16px;
+  right:16px;
+  background:var(--gold);
+  color:var(--btn-gold-text);
+  font-family:Arial,sans-serif;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:5px 10px;
+}
+.pkg-soon .btn-disabled{
+  cursor:not-allowed;
+  opacity:.7;
+  pointer-events:none;
+}
+
+/* RÓLUNK – kép + tagline */
+.about-tagline{
+  font-family:Georgia,serif !important;
+  font-style:italic;
+  font-size:17px !important;
+  color:var(--gold) !important;
+  margin-top:8px;
+}
+.about-more{margin-left:0;margin-top:8px}
+.about-media img{
+  width:100%;
+  max-width:none;
+  aspect-ratio:4/5;
+  max-height:560px;
+  object-fit:cover;
+  object-position:center center;
+  border-top:3px solid var(--gold);
+}
+
+/* POPUP (dialog) */
+.modal{
+  margin:auto;
+  padding:0;
+  width:calc(100% - 32px);
+  max-width:760px;
+  max-height:88vh;
+  overflow:auto;
+  background:var(--bg-hero-card);
+  color:var(--text-heading);
+  border:1px solid var(--border-color);
+  border-top:3px solid var(--gold);
+}
+.modal::backdrop{background:rgba(5,8,22,.75)}
+.modal-inner{position:relative;padding:44px 40px 36px}
+.modal h2{font-size:26px;font-weight:400;line-height:1.3;margin-bottom:22px;padding-right:32px}
+.modal h2 em{color:var(--gold);font-style:italic}
+.modal p{font-family:Arial,sans-serif;font-size:15px;line-height:1.75;color:var(--text-body);margin-bottom:16px}
+.modal-close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:36px;
+  height:36px;
+  background:transparent;
+  border:1px solid var(--border-color);
+  border-radius:50%;
+  color:var(--gold);
+  font-size:15px;
+  cursor:pointer;
+}
+.modal-close:hover{background:rgba(201,162,92,.12)}
+body.modal-open{overflow:hidden}
+
+/* Popup animáció */
+.modal[open]{animation:modalIn .4s cubic-bezier(.2,.8,.2,1) both}
+.modal[open]::backdrop{animation:backdropIn .4s ease both}
+.modal.is-closing{animation:modalOut .28s ease-in both}
+.modal.is-closing::backdrop{animation:backdropOut .28s ease-in both}
+
+@keyframes modalIn{
+  from{opacity:0;transform:translateY(28px) scale(.96)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes modalOut{
+  from{opacity:1;transform:translateY(0) scale(1)}
+  to{opacity:0;transform:translateY(20px) scale(.97)}
+}
+@keyframes backdropIn{from{opacity:0}to{opacity:1}}
+@keyframes backdropOut{from{opacity:1}to{opacity:0}}
+
+/* A bekezdések finoman egymás után úsznak be */
+.modal[open] .modal-inner > *{animation:modalItemIn .5s ease both}
+.modal[open] .modal-inner > :nth-child(3){animation-delay:.08s}
+.modal[open] .modal-inner > :nth-child(4){animation-delay:.14s}
+.modal[open] .modal-inner > :nth-child(5){animation-delay:.2s}
+.modal[open] .modal-inner > :nth-child(6){animation-delay:.26s}
+.modal[open] .modal-inner > :nth-child(7){animation-delay:.32s}
+.modal[open] .modal-inner > :nth-child(8){animation-delay:.38s}
+@keyframes modalItemIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .modal[open],
+  .modal[open]::backdrop,
+  .modal[open] .modal-inner > *{animation:none}
+}
+
+@media(max-width:768px){
+  .about-media img{aspect-ratio:4/3;max-height:none}
+  .modal-inner{padding:40px 20px 24px}
+  .modal h2{font-size:21px}
+  .modal p{font-size:14px}
+}
