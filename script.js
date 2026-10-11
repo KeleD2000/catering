@@ -1,24 +1,67 @@
 // ============================
-// Sötét/világos mód
+// Világos (alap) / sötét (inverz) mód
+// Frissítéskor mindig a világos téma tölt be, a sötét csak a gombbal kapcsolható be.
 // ============================
 (function () {
   const root = document.documentElement;
-  const stored = localStorage.getItem('theme');
-  if (stored === 'light') root.setAttribute('data-theme', 'light');
-
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
-      const isLight = root.getAttribute('data-theme') === 'light';
-      if (isLight) {
+      if (root.getAttribute('data-theme') === 'dark') {
         root.removeAttribute('data-theme');
-        localStorage.setItem('theme', 'dark');
       } else {
-        root.setAttribute('data-theme', 'light');
-        localStorage.setItem('theme', 'light');
+        root.setAttribute('data-theme', 'dark');
       }
     });
   }
+})();
+
+// ============================
+// Nyelvváltás (translations.js alapján)
+// ============================
+const SUPPORTED = ['hu', 'en', 'de'];
+let currentLang = 'hu';
+const t = (key) => (window.TRANSLATIONS[currentLang] || {})[key] ?? window.TRANSLATIONS.hu[key] ?? key;
+
+function applyLang(lang) {
+  if (!SUPPORTED.includes(lang)) lang = 'hu';
+  currentLang = lang;
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.innerHTML = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+    el.dataset.i18nAttr.split(';').forEach(pair => {
+      const [attr, key] = pair.split(':');
+      el.setAttribute(attr, t(key));
+    });
+  });
+
+  document.title = t('title');
+  const meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', t('desc'));
+
+  document.querySelectorAll('.lang-switch button').forEach(b => {
+    b.classList.toggle('is-current', b.dataset.lang === lang);
+  });
+  const hidden = document.getElementById('f-lang');
+  if (hidden) hidden.value = lang;
+}
+
+(function initLang() {
+  let stored = null;
+  try { stored = localStorage.getItem('lang'); } catch (e) {}
+  const browser = (navigator.language || 'hu').slice(0, 2).toLowerCase();
+  const initial = SUPPORTED.includes(stored) ? stored : (SUPPORTED.includes(browser) ? browser : 'hu');
+  if (initial !== 'hu') applyLang(initial);
+
+  document.querySelectorAll('.lang-switch button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      applyLang(btn.dataset.lang);
+      try { localStorage.setItem('lang', btn.dataset.lang); } catch (e) {}
+    });
+  });
 })();
 
 // ============================
@@ -33,7 +76,6 @@ navToggle.addEventListener('click', () => {
   navToggle.textContent = isOpen ? '✕' : '☰';
 });
 
-// Ha egy belső (#) linkre kattintanak, zárja be a mobil menüt görgetés előtt
 navLinks.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', () => {
     navLinks.classList.remove('open');
@@ -45,8 +87,6 @@ navLinks.querySelectorAll('a[href^="#"]').forEach(link => {
 // ============================
 // Scroll-reveal animáció
 // ============================
-const revealEls = document.querySelectorAll('.reveal');
-
 const revealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -54,50 +94,12 @@ const revealObserver = new IntersectionObserver((entries) => {
       revealObserver.unobserve(entry.target);
     }
   });
-}, {
-  threshold: 0.15,
-  rootMargin: '0px 0px -40px 0px'
-});
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
-revealEls.forEach(el => revealObserver.observe(el));
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 // ============================
-// Számláló animáció a "Rólunk" statisztikáknál
-// ============================
-const counters = document.querySelectorAll('.stat-number[data-target]');
-
-const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      animateCounter(entry.target);
-      counterObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.4 });
-
-function animateCounter(el) {
-  const target = parseInt(el.getAttribute('data-target'), 10);
-  const suffix = el.getAttribute('data-suffix') || '';
-  const duration = 1400;
-  const startTime = performance.now();
-
-  function step(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(eased * target) + suffix;
-    if (progress < 1) {
-      requestAnimationFrame(step);
-    } else {
-      el.textContent = target + suffix;
-    }
-  }
-  requestAnimationFrame(step);
-}
-
-counters.forEach(el => counterObserver.observe(el));
-
-// ============================
-// Ajánlatkérő űrlap küldése (AJAX -> PHP -> SMTP)
+// Ajánlatkérő űrlap (AJAX -> PHP -> SMTP)
 // ============================
 const cateringForm = document.getElementById('cateringForm');
 
@@ -108,7 +110,6 @@ if (cateringForm) {
   cateringForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Egyszerű kliensoldali validáció
     if (!cateringForm.checkValidity()) {
       cateringForm.reportValidity();
       return;
@@ -118,7 +119,7 @@ if (cateringForm) {
     const originalBtnText = submitBtn.textContent;
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Küldés...';
+    submitBtn.textContent = t('msg.sending');
     formMessage.textContent = '';
     formMessage.className = 'form-message';
 
@@ -133,19 +134,19 @@ if (cateringForm) {
       try {
         result = await response.json();
       } catch {
-        result = { success: false, message: 'Váratlan válasz érkezett a szervertől.' };
+        result = { success: false, message: t('msg.unexpected') };
       }
 
       if (response.ok && result.success) {
-        formMessage.textContent = result.message || 'Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.';
+        formMessage.textContent = result.message || t('msg.success');
         formMessage.classList.add('form-message--success');
         cateringForm.reset();
       } else {
-        formMessage.textContent = result.message || 'Hiba történt a küldés során. Kérjük, próbálja újra, vagy hívjon minket telefonon.';
+        formMessage.textContent = result.message || t('msg.error');
         formMessage.classList.add('form-message--error');
       }
     } catch (err) {
-      formMessage.textContent = 'Hálózati hiba történt. Kérjük, ellenőrizze az internetkapcsolatot, majd próbálja újra.';
+      formMessage.textContent = t('msg.network');
       formMessage.classList.add('form-message--error');
     } finally {
       submitBtn.disabled = false;
@@ -155,7 +156,7 @@ if (cateringForm) {
 }
 
 // ============================
-// "Rólunk" popup (dialog) – animált nyitás/zárás
+// "Rólunk" popup (dialog)
 // ============================
 const aboutModal = document.getElementById('aboutModal');
 const aboutOpenBtn = document.getElementById('aboutOpenBtn');
@@ -192,29 +193,12 @@ if (aboutModal && aboutOpenBtn) {
       if (e.target === aboutModal) finish();
     }, { once: true });
 
-    // Biztonsági tartalék, ha az animationend valamiért nem fut le
     setTimeout(finish, 400);
   }
 
   aboutOpenBtn.addEventListener('click', openAboutModal);
-
-  aboutModal.querySelectorAll('[data-close]').forEach(btn => {
-    btn.addEventListener('click', closeAboutModal);
-  });
-
-  // Háttérre (a doboz mellé) kattintva is bezárul
-  aboutModal.addEventListener('click', (e) => {
-    if (e.target === aboutModal) closeAboutModal();
-  });
-
-  // Esc: a böngésző alap (azonnali) bezárása helyett animáltan zárjuk
-  aboutModal.addEventListener('cancel', (e) => {
-    e.preventDefault();
-    closeAboutModal();
-  });
-
-  // Bezáráskor visszaáll a görgetés
-  aboutModal.addEventListener('close', () => {
-    document.body.classList.remove('modal-open');
-  });
+  aboutModal.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', closeAboutModal));
+  aboutModal.addEventListener('click', (e) => { if (e.target === aboutModal) closeAboutModal(); });
+  aboutModal.addEventListener('cancel', (e) => { e.preventDefault(); closeAboutModal(); });
+  aboutModal.addEventListener('close', () => { document.body.classList.remove('modal-open'); });
 }
