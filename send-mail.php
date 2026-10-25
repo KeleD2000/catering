@@ -1,183 +1,344 @@
 <?php
-/**
- * send-mail.php
- * ------------------------------------------------------------
- * Fogadja a cateringForm AJAX POST kérését, és a Brevo (Sendinblue)
- * Transactional Email API-ján keresztül elküldi emailben.
- *
- * A frontend (script.js) egy JSON választ vár:
- *   { "success": true/false, "message": "..." }
- */
-
 header('Content-Type: application/json; charset=utf-8');
+date_default_timezone_set('Europe/Budapest');
 
-// Csak POST kérést fogadunk el
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Csak POST kérés engedélyezett.']);
-    exit;
-}
+// =====================================================
+// BEÁLLÍTÁSOK – ezt a 3 sort kell átírni
+// =====================================================
+$to      = 'IDE_AZ_EMAIL_CIM@pelda.hu';      // ide érkeznek az ajánlatkérések
+$from    = 'noreply@ELEFANTOS-DOMAIN.hu';    // FONTOS: a Rackhoston lévő domain egyik címe legyen!
+$siteUrl = 'https://ELEFANTOS-DOMAIN.hu';    // az oldal címe
+$sendConfirmation = true;                    // true = az ügyfél is kap visszaigazoló levelet
+// =====================================================
 
-$config = require __DIR__ . '/config.php';
+// Védelem: amíg a fenti 3 beállítás nincs kitöltve, ne jelezzen "sikeres" küldést
+$configMissing = (strpos($to, 'IDE_AZ_') !== false)
+    || (strpos($from, 'ELEFANTOS-DOMAIN') !== false)
+    || (strpos($siteUrl, 'ELEFANTOS-DOMAIN') !== false);
 
-if (empty($config['BREVO_API_KEY']) || $config['BREVO_API_KEY'] === 'IDE_MASOLD_A_BREVO_API_KULCSOT') {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'A szerver e-mail küldése nincs beállítva. Kérjük, keressen minket telefonon.']);
-    exit;
-}
-
-// ------------------------------------------------------------
-// 1) Bemenet beolvasása és tisztítása
-// ------------------------------------------------------------
-function clean($value) {
-    return trim(strip_tags((string) ($value ?? '')));
-}
-
-$name       = clean($_POST['name'] ?? '');
-$phone      = clean($_POST['phone'] ?? '');
-$email      = clean($_POST['email'] ?? '');
-$eventType  = clean($_POST['event_type'] ?? '');
-$guests     = clean($_POST['guests'] ?? '');
-$location   = clean($_POST['location'] ?? '');
-$eventDate  = clean($_POST['event_date'] ?? '');
-$eventTime  = clean($_POST['event_time'] ?? '');
-$message    = clean($_POST['message'] ?? '');
-
-// Egyszerű "honeypot" spam elleni védelem (opcionális — ha van rejtett mező a formon "website" néven)
-if (!empty($_POST['website'] ?? '')) {
-    // Botnak tűnik: hamisan sikeresnek jelezzük vissza, de nem küldünk semmit
-    echo json_encode(['success' => true, 'message' => 'Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.']);
-    exit;
-}
-
-// ------------------------------------------------------------
-// 2) Szerveroldali validáció
-// ------------------------------------------------------------
-$errors = [];
-
-if ($name === '') {
-    $errors[] = 'A név megadása kötelező.';
-}
-if ($phone === '') {
-    $errors[] = 'A telefonszám megadása kötelező.';
-}
-if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors[] = 'Érvényes e-mail cím megadása kötelező.';
-}
-if ($eventType === '') {
-    $errors[] = 'A rendezvény típusának megadása kötelező.';
-}
-
-if (!empty($errors)) {
-    http_response_code(422);
-    echo json_encode(['success' => false, 'message' => implode(' ', $errors)]);
-    exit;
-}
-
-// ------------------------------------------------------------
-// 3) Email tartalom összeállítása
-// ------------------------------------------------------------
-function row($label, $value) {
-    if ($value === '') return '';
-    return '<tr><td style="padding:6px 12px;color:#666;font-weight:600;white-space:nowrap;">'
-        . htmlspecialchars($label) . '</td><td style="padding:6px 12px;">'
-        . nl2br(htmlspecialchars($value)) . '</td></tr>';
-}
-
-$htmlBody = '
-<div style="font-family:Arial,Helvetica,sans-serif;max-width:600px;margin:0 auto;">
-  <h2 style="color:#2b2b2b;">Új ajánlatkérés érkezett a weboldalról</h2>
-  <table style="border-collapse:collapse;width:100%;">
-    ' . row('Név', $name) . '
-    ' . row('Telefonszám', $phone) . '
-    ' . row('E-mail', $email) . '
-    ' . row('Rendezvény típusa', $eventType) . '
-    ' . row('Vendégek száma', $guests) . '
-    ' . row('Helyszín', $location) . '
-    ' . row('Dátum', $eventDate) . '
-    ' . row('Időpont', $eventTime) . '
-    ' . row('Üzenet', $message) . '
-  </table>
-</div>';
-
-$textBody = "Új ajánlatkérés érkezett a weboldalról\n\n"
-    . "Név: $name\nTelefonszám: $phone\nE-mail: $email\n"
-    . "Rendezvény típusa: $eventType\nVendégek száma: $guests\n"
-    . "Helyszín: $location\nDátum: $eventDate\nIdőpont: $eventTime\n"
-    . "Üzenet: $message\n";
-
-// ------------------------------------------------------------
-// 4) Küldés a Brevo API-n keresztül
-// ------------------------------------------------------------
-function sendBrevoEmail($apiKey, $payload) {
-    $ch = curl_init('https://api.brevo.com/v3/smtp/email');
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => json_encode($payload),
-        CURLOPT_HTTPHEADER     => [
-            'Accept: application/json',
-            'Content-Type: application/json',
-            'api-key: ' . $apiKey,
-        ],
-        CURLOPT_TIMEOUT        => 15,
-    ]);
-    $response   = curl_exec($ch);
-    $httpCode   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curlError  = curl_error($ch);
-    curl_close($ch);
-
-    return [
-        'ok'       => ($httpCode >= 200 && $httpCode < 300),
-        'httpCode' => $httpCode,
-        'body'     => $response,
-        'error'    => $curlError,
-    ];
-}
-
-// 4a) Belső értesítő email (a cégnek)
-$notifyPayload = [
-    'sender'      => ['name' => $config['FROM_NAME'], 'email' => $config['FROM_EMAIL']],
-    'to'          => [['name' => $config['TO_NAME'], 'email' => $config['TO_EMAIL']]],
-    'replyTo'     => ['name' => $name, 'email' => $email],
-    'subject'     => "Új ajánlatkérés – $eventType ($name)",
-    'htmlContent' => $htmlBody,
-    'textContent' => $textBody,
+// Üzenetek nyelvenként (a script.js ezeket jeleníti meg)
+$MSG = [
+    'hu' => [
+        'ok'      => 'Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.',
+        'invalid' => 'Kérjük, töltse ki az összes mezőt, és adjon meg érvényes adatokat.',
+        'fail'    => 'Hiba történt a küldés során. Kérjük, próbálja újra, vagy hívjon minket telefonon.',
+        'method'  => 'Érvénytelen kérés.',
+    ],
+    'en' => [
+        'ok'      => 'Thank you! Your enquiry has been sent, we will get back to you shortly.',
+        'invalid' => 'Please fill in all fields with valid data.',
+        'fail'    => 'Something went wrong while sending. Please try again or call us.',
+        'method'  => 'Invalid request.',
+    ],
+    'de' => [
+        'ok'      => 'Vielen Dank! Ihre Anfrage wurde gesendet, wir melden uns in Kürze bei Ihnen.',
+        'invalid' => 'Bitte füllen Sie alle Felder mit gültigen Angaben aus.',
+        'fail'    => 'Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder rufen Sie uns an.',
+        'method'  => 'Ungültige Anfrage.',
+    ],
 ];
 
-$result = sendBrevoEmail($config['BREVO_API_KEY'], $notifyPayload);
-
-if (!$result['ok']) {
-    error_log('Brevo email küldési hiba: HTTP ' . $result['httpCode'] . ' – ' . $result['body'] . ' – curl: ' . $result['error']);
-    http_response_code(502);
-    echo json_encode(['success' => false, 'message' => 'Hiba történt a küldés során. Kérjük, próbálja újra, vagy hívjon minket telefonon.']);
+function respond($code, $success, $message) {
+    http_response_code($code);
+    echo json_encode(['success' => $success, 'message' => $message], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-// 4b) (Opcionális) Visszaigazoló email a jelentkezőnek
-if (!empty($config['SEND_CONFIRMATION_TO_USER'])) {
-    $confirmPayload = [
-        'sender'      => ['name' => $config['FROM_NAME'], 'email' => $config['FROM_EMAIL']],
-        'to'          => [['name' => $name, 'email' => $email]],
-        'subject'     => 'Köszönjük az ajánlatkérést!',
-        'htmlContent' => '<div style="font-family:Arial,Helvetica,sans-serif;">'
-            . '<p>Kedves ' . htmlspecialchars($name) . '!</p>'
-            . '<p>Köszönjük az ajánlatkérést, hamarosan felvesszük Önnel a kapcsolatot.</p>'
-            . '<p>Üdvözlettel,<br>' . htmlspecialchars($config['TO_NAME']) . '</p>'
-            . '</div>',
-        'textContent' => "Kedves $name!\n\nKöszönjük az ajánlatkérést, hamarosan felvesszük Önnel a kapcsolatot.\n\nÜdvözlettel,\n{$config['TO_NAME']}",
-    ];
-    // Ha ez elbukik, ne buktassuk el az egész kérést — csak logoljuk
-    $confirmResult = sendBrevoEmail($config['BREVO_API_KEY'], $confirmPayload);
-    if (!$confirmResult['ok']) {
-        error_log('Brevo visszaigazoló email hiba: HTTP ' . $confirmResult['httpCode'] . ' – ' . $confirmResult['body']);
-    }
+function clean($v, $max = 200) {
+    $v = trim(str_replace(["\r", "\n"], ' ', (string)$v));
+    return function_exists('mb_substr') ? mb_substr($v, 0, $max) : substr($v, 0, $max);
 }
 
-// ------------------------------------------------------------
-// 5) Siker
-// ------------------------------------------------------------
-echo json_encode([
-    'success' => true,
-    'message' => 'Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.',
-]);
+function clean_multiline($v, $max = 3000) {
+    $v = trim(str_replace("\r", '', (string)$v));
+    return function_exists('mb_substr') ? mb_substr($v, 0, $max) : substr($v, 0, $max);
+}
+
+function h($v) {
+    return htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+}
+
+// Nyelv
+$lang = $_POST['lang'] ?? 'hu';
+if (!isset($MSG[$lang])) $lang = 'hu';
+$M = $MSG[$lang];
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    respond(405, false, $M['method']);
+}
+
+if ($configMissing) {
+    error_log('send-mail.php: a $to / $from / $siteUrl beállítások még nincsenek kitöltve.');
+    respond(500, false, $M['fail']);
+}
+
+// Honeypot: ha kitöltötték, bot volt – csendben "sikeresnek" tűnünk
+if (!empty($_POST['website'])) {
+    respond(200, true, $M['ok']);
+}
+
+// Mezők
+$name      = clean($_POST['name'] ?? '');
+$phone     = clean($_POST['phone'] ?? '');
+$email     = clean($_POST['email'] ?? '');
+$eventType = clean($_POST['event_type'] ?? '');
+$guests    = clean($_POST['guests'] ?? '', 10);
+$location  = clean($_POST['location'] ?? '');
+$eventDate = clean($_POST['event_date'] ?? '', 20);
+$eventTime = clean($_POST['event_time'] ?? '', 10);
+$message   = clean_multiline($_POST['message'] ?? '');
+
+// Validálás
+$guestsOk = ($guests !== '' && ctype_digit($guests) && (int)$guests > 0);
+$dateOk   = (bool)preg_match('/^\d{4}-\d{2}-\d{2}$/', $eventDate);
+$timeOk   = (bool)preg_match('/^\d{2}:\d{2}$/', $eventTime);
+$typeOk   = in_array($eventType, ['Grill', 'Pizzás rendezvény', 'Bankett vacsora', 'Hideg büfé', 'Céges rendezvény', 'Esküvő'], true);
+
+if ($name === '' || $phone === '' || $location === '' || $message === ''
+    || !$typeOk || !$guestsOk || !$dateOk || !$timeOk
+    || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    respond(400, false, $M['invalid']);
+}
+if ($guests !== '' && !ctype_digit($guests)) $guests = '';
+if ($eventDate !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $eventDate)) $eventDate = '';
+if ($eventTime !== '' && !preg_match('/^\d{2}:\d{2}$/', $eventTime)) $eventTime = '';
+
+$langNames = ['hu' => 'magyar', 'en' => 'angol', 'de' => 'német'];
+$when      = date('Y. m. d. H:i');
+$telHref   = 'tel:' . preg_replace('/[^\d+]/', '', $phone);
+
+$subject = '=?UTF-8?B?' . base64_encode('Új ajánlatkérés: ' . $name . ' – ' . $eventType) . '?=';
+
+// ---------- Sima szöveges változat ----------
+$text  = "Új ajánlatkérés érkezett a weboldalról\n\n";
+$text .= "Név: $name\n";
+$text .= "Telefon: $phone\n";
+$text .= "E-mail: $email\n";
+$text .= "Rendezvény típusa: $eventType\n";
+if ($guests !== '')    $text .= "Vendégek száma: $guests\n";
+if ($location !== '')  $text .= "Helyszín: $location\n";
+if ($eventDate !== '') $text .= "Dátum: $eventDate\n";
+if ($eventTime !== '') $text .= "Kezdés: $eventTime\n";
+if ($message !== '')   $text .= "\nÜzenet:\n$message\n";
+$text .= "\nÜgyfél nyelve: " . $langNames[$lang] . "\n";
+$text .= "Beérkezett: $when\n";
+
+// ---------- HTML változat ----------
+function row($label, $valueHtml) {
+    return '<tr><td style="padding:14px 0;border-bottom:1px solid #E3D9BF;">'
+        . '<div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#786F52;margin-bottom:4px;">' . h($label) . '</div>'
+        . '<div style="font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.4;color:#241F14;">' . $valueHtml . '</div>'
+        . '</td></tr>';
+}
+
+$linkStyle = 'color:#A97F31;text-decoration:underline;';
+
+$rows  = row('Név', h($name));
+$rows .= row('Telefon', '<a href="' . h($telHref) . '" style="' . $linkStyle . '">' . h($phone) . '</a>');
+$rows .= row('E-mail', '<a href="mailto:' . h($email) . '" style="' . $linkStyle . '">' . h($email) . '</a>');
+$rows .= row('Rendezvény típusa', '<span style="display:inline-block;background:#F5EFE0;border:1px solid #E3D9BF;border-radius:999px;padding:5px 14px;font-size:14px;">' . h($eventType) . '</span>');
+if ($guests !== '')    $rows .= row('Vendégek száma', h($guests) . ' fő');
+if ($location !== '')  $rows .= row('Helyszín', h($location));
+if ($eventDate !== '' || $eventTime !== '') {
+    $rows .= row('Időpont', h(trim($eventDate . ' ' . $eventTime)));
+}
+if ($message !== '')   $rows .= row('Üzenet', nl2br(h($message)));
+$rows .= row('Ügyfél nyelve', h($langNames[$lang]));
+
+$html = '<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Új ajánlatkérés</title>
+</head>
+<body style="margin:0;padding:0;background:#FAF7F0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FAF7F0" style="background:#FAF7F0;">
+<tr><td align="center" style="padding:28px 12px;">
+
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+
+    <tr><td bgcolor="#141C40" style="background:#141C40;padding:26px 28px;border-radius:4px 4px 0 0;">
+      <div style="font-family:Georgia,\'Times New Roman\',serif;font-size:24px;line-height:1.1;color:#C9A25C;letter-spacing:0.05em;">Exclusive Catering</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#9AA3CF;margin-top:6px;">by Elefántos</div>
+    </td></tr>
+
+    <tr><td height="4" bgcolor="#C9A25C" style="background:#C9A25C;font-size:0;line-height:0;">&nbsp;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;padding:30px 28px 10px;border-left:1px solid #E3D9BF;border-right:1px solid #E3D9BF;">
+      <div style="font-family:Georgia,\'Times New Roman\',serif;font-size:22px;line-height:1.25;color:#241F14;">Új ajánlatkérés érkezett</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#786F52;margin-top:6px;">A weboldal ajánlatkérő űrlapján keresztül.</div>
+    </td></tr>
+
+    <tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;padding:10px 28px 6px;border-left:1px solid #E3D9BF;border-right:1px solid #E3D9BF;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+        ' . $rows . '
+      </table>
+    </td></tr>
+
+    <tr><td bgcolor="#FFFFFF" align="left" style="background:#FFFFFF;padding:22px 28px 32px;border-left:1px solid #E3D9BF;border-right:1px solid #E3D9BF;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td bgcolor="#A97F31" style="background:#A97F31;border-radius:2px;">
+          <a href="mailto:' . h($email) . '" style="display:inline-block;padding:13px 26px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;color:#FFFDF8;text-decoration:none;">Válasz az érdeklődőnek</a>
+        </td>
+      </tr></table>
+    </td></tr>
+
+    <tr><td bgcolor="#EEE6D3" style="background:#EEE6D3;padding:16px 28px;border:1px solid #E3D9BF;border-top:none;border-radius:0 0 4px 4px;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#786F52;">
+        Beérkezett: ' . h($when) . '<br>
+        Ez az üzenet a <a href="' . h($siteUrl) . '" style="color:#786F52;">' . h($siteUrl) . '</a> weboldalról érkezett.
+      </div>
+    </td></tr>
+
+  </table>
+
+</td></tr>
+</table>
+</body>
+</html>';
+
+// ---------- Összeállítás (szöveg + HTML) ----------
+$boundary = 'b' . md5(uniqid('', true));
+
+$headers  = "From: Exclusive Catering by Elefantos <$from>\r\n";
+$headers .= "Reply-To: $email\r\n";
+$headers .= "MIME-Version: 1.0\r\n";
+$headers .= "Content-Type: multipart/alternative; boundary=\"$boundary\"\r\n";
+
+$body  = "--$boundary\r\n";
+$body .= "Content-Type: text/plain; charset=UTF-8\r\n";
+$body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+$body .= chunk_split(base64_encode($text)) . "\r\n";
+$body .= "--$boundary\r\n";
+$body .= "Content-Type: text/html; charset=UTF-8\r\n";
+$body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+$body .= chunk_split(base64_encode($html)) . "\r\n";
+$body .= "--$boundary--";
+
+$sent = mail($to, $subject, $body, $headers, '-f' . $from);
+
+if (!$sent) {
+    respond(500, false, $M['fail']);
+}
+
+// ---------- Visszaigazoló levél az ügyfélnek (a saját nyelvén) ----------
+if ($sendConfirmation) {
+    $typeMap = [
+        'en' => ['Grill' => 'Barbecue', 'Pizzás rendezvény' => 'Pizza event', 'Bankett vacsora' => 'Banquet dinner',
+            'Hideg büfé' => 'Cold buffet', 'Céges rendezvény' => 'Corporate event', 'Esküvő' => 'Wedding'],
+        'de' => ['Grill' => 'Grill', 'Pizzás rendezvény' => 'Pizza-Event', 'Bankett vacsora' => 'Bankettessen',
+            'Hideg büfé' => 'Kaltes Buffet', 'Céges rendezvény' => 'Firmenveranstaltung', 'Esküvő' => 'Hochzeit'],
+    ];
+    $typeShown = $typeMap[$lang][$eventType] ?? $eventType;
+
+    $C = [
+        'hu' => [
+            'subject' => 'Megkaptuk ajánlatkérését – Exclusive Catering by Elefántos',
+            'title'   => 'Köszönjük az ajánlatkérést!',
+            'intro'   => 'Kedves {name}! Megkaptuk ajánlatkérését, munkatársunk rövid időn belül felveszi Önnel a kapcsolatot.',
+            'sumH'    => 'Az Ön által megadott adatok',
+            'L'       => ['type' => 'Rendezvény típusa', 'guests' => 'Vendégek száma', 'loc' => 'Helyszín', 'date' => 'Időpont', 'msg' => 'Üzenet'],
+            'guestsU' => ' fő',
+            'urgent'  => 'Sürgős esetben hívjon minket:',
+            'phone'   => '06 30 316 8429',
+            'sign'    => 'Üdvözlettel,<br>Exclusive Catering by Elefántos',
+            'auto'    => 'Ez egy automatikus visszaigazolás. Kérdés esetén válaszoljon erre a levélre.',
+        ],
+        'en' => [
+            'subject' => 'We received your enquiry – Exclusive Catering by Elefántos',
+            'title'   => 'Thank you for your enquiry!',
+            'intro'   => 'Dear {name}, we have received your enquiry and our team will contact you shortly.',
+            'sumH'    => 'Your details',
+            'L'       => ['type' => 'Type of event', 'guests' => 'Number of guests', 'loc' => 'Venue', 'date' => 'Date and time', 'msg' => 'Message'],
+            'guestsU' => ' guests',
+            'urgent'  => 'In urgent cases please call us:',
+            'phone'   => '+36 30 316 8429',
+            'sign'    => 'Kind regards,<br>Exclusive Catering by Elefántos',
+            'auto'    => 'This is an automatic confirmation. If you have questions, simply reply to this e-mail.',
+        ],
+        'de' => [
+            'subject' => 'Wir haben Ihre Anfrage erhalten – Exclusive Catering by Elefántos',
+            'title'   => 'Vielen Dank für Ihre Anfrage!',
+            'intro'   => 'Guten Tag {name}, wir haben Ihre Anfrage erhalten und melden uns in Kürze bei Ihnen.',
+            'sumH'    => 'Ihre Angaben',
+            'L'       => ['type' => 'Art der Veranstaltung', 'guests' => 'Anzahl der Gäste', 'loc' => 'Veranstaltungsort', 'date' => 'Datum und Uhrzeit', 'msg' => 'Nachricht'],
+            'guestsU' => ' Gäste',
+            'urgent'  => 'In dringenden Fällen rufen Sie uns an:',
+            'phone'   => '+36 30 316 8429',
+            'sign'    => 'Mit freundlichen Grüßen<br>Exclusive Catering by Elefántos',
+            'auto'    => 'Dies ist eine automatische Bestätigung. Bei Fragen antworten Sie einfach auf diese E-Mail.',
+        ],
+    ][$lang];
+
+    $cRows = row($C['L']['type'], h($typeShown));
+    if ($guests !== '')    $cRows .= row($C['L']['guests'], h($guests) . h($C['guestsU']));
+    if ($location !== '')  $cRows .= row($C['L']['loc'], h($location));
+    if ($eventDate !== '' || $eventTime !== '') $cRows .= row($C['L']['date'], h(trim($eventDate . ' ' . $eventTime)));
+    if ($message !== '')   $cRows .= row($C['L']['msg'], nl2br(h($message)));
+
+    $intro = str_replace('{name}', h($name), h($C['intro']));
+    $introHtml = str_replace(h('{name}'), h($name), $intro);
+
+    $cHtml = '<!DOCTYPE html>
+<html lang="' . h($lang) . '">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>' . h($C['title']) . '</title></head>
+<body style="margin:0;padding:0;background:#FAF7F0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FAF7F0" style="background:#FAF7F0;">
+<tr><td align="center" style="padding:28px 12px;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;">
+    <tr><td bgcolor="#141C40" style="background:#141C40;padding:26px 28px;border-radius:4px 4px 0 0;">
+      <div style="font-family:Georgia,\'Times New Roman\',serif;font-size:24px;line-height:1.1;color:#C9A25C;letter-spacing:0.05em;">Exclusive Catering</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:#9AA3CF;margin-top:6px;">by Elefántos</div>
+    </td></tr>
+    <tr><td height="4" bgcolor="#C9A25C" style="background:#C9A25C;font-size:0;line-height:0;">&nbsp;</td></tr>
+    <tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;padding:30px 28px 10px;border-left:1px solid #E3D9BF;border-right:1px solid #E3D9BF;">
+      <div style="font-family:Georgia,\'Times New Roman\',serif;font-size:22px;line-height:1.25;color:#241F14;">' . h($C['title']) . '</div>
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#4F4A38;margin-top:10px;">' . $introHtml . '</div>
+    </td></tr>
+    <tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;padding:18px 28px 0;border-left:1px solid #E3D9BF;border-right:1px solid #E3D9BF;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#A97F31;">' . h($C['sumH']) . '</div>
+    </td></tr>
+    <tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;padding:4px 28px 6px;border-left:1px solid #E3D9BF;border-right:1px solid #E3D9BF;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' . $cRows . '</table>
+    </td></tr>
+    <tr><td bgcolor="#FFFFFF" style="background:#FFFFFF;padding:20px 28px 30px;border-left:1px solid #E3D9BF;border-right:1px solid #E3D9BF;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.6;color:#4F4A38;">' . h($C['urgent']) . ' <a href="tel:+36303168429" style="color:#A97F31;font-weight:bold;text-decoration:none;">' . h($C['phone']) . '</a></div>
+      <div style="font-family:Georgia,\'Times New Roman\',serif;font-size:15px;line-height:1.6;color:#241F14;margin-top:18px;">' . $C['sign'] . '</div>
+    </td></tr>
+    <tr><td bgcolor="#EEE6D3" style="background:#EEE6D3;padding:16px 28px;border:1px solid #E3D9BF;border-top:none;border-radius:0 0 4px 4px;">
+      <div style="font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#786F52;">' . h($C['auto']) . '<br>7621 Pécs, Jókai tér 6. · <a href="' . h($siteUrl) . '" style="color:#786F52;">' . h($siteUrl) . '</a></div>
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body>
+</html>';
+
+    $cText  = str_replace('{name}', $name, $C['intro']) . "\n\n";
+    $cText .= $C['sumH'] . ":\n- " . $C['L']['type'] . ': ' . $typeShown . "\n";
+    if ($guests !== '')    $cText .= '- ' . $C['L']['guests'] . ': ' . $guests . "\n";
+    if ($location !== '')  $cText .= '- ' . $C['L']['loc'] . ': ' . $location . "\n";
+    if ($eventDate !== '' || $eventTime !== '') $cText .= '- ' . $C['L']['date'] . ': ' . trim($eventDate . ' ' . $eventTime) . "\n";
+    if ($message !== '')   $cText .= '- ' . $C['L']['msg'] . ': ' . $message . "\n";
+    $cText .= "\n" . $C['urgent'] . ' ' . $C['phone'] . "\n\n" . strip_tags(str_replace('<br>', "\n", $C['sign'])) . "\n";
+
+    $cBoundary = 'c' . md5(uniqid('', true));
+    $cHeaders  = "From: Exclusive Catering by Elefantos <$from>\r\n";
+    $cHeaders .= "Reply-To: $to\r\n";
+    $cHeaders .= "MIME-Version: 1.0\r\n";
+    $cHeaders .= "Content-Type: multipart/alternative; boundary=\"$cBoundary\"\r\n";
+
+    $cBody  = "--$cBoundary\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n";
+    $cBody .= chunk_split(base64_encode($cText)) . "\r\n";
+    $cBody .= "--$cBoundary\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n";
+    $cBody .= chunk_split(base64_encode($cHtml)) . "\r\n";
+    $cBody .= "--$cBoundary--";
+
+    $cSubject = '=?UTF-8?B?' . base64_encode($C['subject']) . '?=';
+
+    // Ha ez nem sikerül, az ajánlatkérés akkor is megérkezett hozzátok – nem jelzünk hibát
+    @mail($email, $cSubject, $cBody, $cHeaders, '-f' . $from);
+}
+
+respond(200, true, $M['ok']);

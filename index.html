@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Exclusive Catering by Elefántos – Catering Pécsett</title>
   <meta name="description" content="Exclusive Catering by Elefántos – catering és rendezvényszervezés Pécsett: grill, pizzás rendezvény, bankett, hidegbüfé, céges rendezvények és esküvő." />
+  <link rel="icon" type="image/png" href="assets/logo-icon.png" />
+  <link rel="apple-touch-icon" href="assets/logo-icon.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -217,6 +219,7 @@
   </div>
 </section>
 
+<!--
 <section class="section-dark" id="velemenyek">
   <div class="section-header reveal">
     <div class="overtitle" data-i18n="rv_over">Vélemények</div>
@@ -243,6 +246,7 @@
     </div>
   </div>
 </section>
+-->
 
 <section class="contact-section reveal" id="kapcsolat">
   <div class="contact-grid">
@@ -257,15 +261,13 @@
           <div class="contact-val"><a href="tel:+36303168429" data-i18n="phone_disp">06 30 316 8429</a></div>
         </div>
       </div>
-      <!-- TODO: ide kerül az új e-mail cím (cserélje le az ADD_EMAIL_HERE szöveget, majd vegye ki a megjegyzés-jeleket)
       <div class="contact-item">
-        <div class="contact-icon">✉</div>
+        <div class="contact-icon">📧</div>
         <div>
           <div class="contact-label" data-i18n="ct_email_l">E-mail</div>
-          <div class="contact-val"><a href="mailto:ADD_EMAIL_HERE">ADD_EMAIL_HERE</a></div>
+          <div class="contact-val"><a href="catering@elefantos.hu">catering@elefantos.hu</a></div>
         </div>
       </div>
-      -->
       <div class="contact-item">
         <div class="contact-icon">📍</div>
         <div>
@@ -306,26 +308,26 @@
           </div>
           <div class="form-field">
             <label for="f-guests" data-i18n="f_guests">Vendégek száma</label>
-            <input id="f-guests" name="guests" type="number" min="1" placeholder="pl. 80" data-i18n-attr="placeholder:f_guests_ph" />
+            <input id="f-guests" name="guests" type="number" min="1" placeholder="pl. 80" data-i18n-attr="placeholder:f_guests_ph" required />
           </div>
         </div>
         <div class="form-field">
           <label for="f-location" data-i18n="f_loc">Helyszín</label>
-          <input id="f-location" name="location" type="text" placeholder="Rendezvény helyszíne (cím vagy terem neve)" data-i18n-attr="placeholder:f_loc_ph" />
+          <input id="f-location" name="location" type="text" placeholder="Rendezvény helyszíne (cím vagy terem neve)" data-i18n-attr="placeholder:f_loc_ph" required />
         </div>
         <div class="form-row">
           <div class="form-field">
             <label for="f-date" data-i18n="f_date">Rendezvény dátuma</label>
-            <input id="f-date" name="event_date" type="date" />
+            <input id="f-date" name="event_date" type="date" required />
           </div>
           <div class="form-field">
             <label for="f-time" data-i18n="f_time">Kezdés időpontja</label>
-            <input id="f-time" name="event_time" type="time" />
+            <input id="f-time" name="event_time" type="time" required />
           </div>
         </div>
         <div class="form-field">
           <label for="f-message" data-i18n="f_msg">Üzenet</label>
-          <textarea id="f-message" name="message" placeholder="Rövid leírás a rendezvényről, különleges kérések..." data-i18n-attr="placeholder:f_msg_ph"></textarea>
+          <textarea id="f-message" name="message" placeholder="Rövid leírás a rendezvényről, különleges kérések..." data-i18n-attr="placeholder:f_msg_ph" required></textarea>
         </div>
 
         <!-- Honeypot mező: emberi felhasználók számára rejtett, botok gyakran kitöltik -->
@@ -334,13 +336,22 @@
           <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off" />
         </div>
 
-        <div id="formMessage" class="form-message" role="status" aria-live="polite"></div>
+        <p class="form-note" data-i18n="f_required_note"><span>*</span> Kötelezően kitöltendő mezők</p>
 
         <button type="submit" class="form-submit" id="formSubmitBtn" data-i18n="f_submit">Ajánlatot kérek</button>
       </form>
     </div>
   </div>
 </section>
+
+<dialog class="modal result-modal" id="resultModal" aria-labelledby="resultTitle">
+  <div class="modal-inner result-inner">
+    <div class="result-icon" id="resultIcon" aria-hidden="true"></div>
+    <h2 id="resultTitle"></h2>
+    <p id="resultText"></p>
+    <button type="button" class="btn-gold" id="resultCloseBtn" data-i18n="res_close">Rendben</button>
+  </div>
+</dialog>
 
 <footer class="footer">
   <div>

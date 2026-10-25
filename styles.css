@@ -523,6 +523,59 @@ body.modal-open{overflow:hidden}
   .modal[open],.modal[open]::backdrop,.modal[open] .modal-inner > *{animation:none}
 }
 
+/* EREDMÉNY POPUP (sikeres / sikertelen küldés) */
+.result-modal{max-width:460px}
+.result-inner{text-align:center;padding:44px 32px 32px}
+.result-modal h2{padding-right:0;margin-bottom:12px}
+.result-icon{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  margin:0 auto 20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:Arial,sans-serif;
+  font-size:30px;
+  font-weight:700;
+  border:2px solid currentColor;
+}
+.result-modal.is-success .result-icon{color:#3fa34d}
+.result-modal.is-error .result-icon{color:#d0483e}
+.result-modal .btn-gold{margin:8px 0 0;width:100%}
+
+/* KÖTELEZŐ MEZŐK */
+.form-field:has(:required) > label::after{content:" *";color:var(--gold);font-weight:700}
+.form-field input:required,
+.form-field select:required,
+.form-field textarea:required{border-left:3px solid var(--gold)}
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus{outline:none;border-color:var(--gold)}
+.form-note{font-family:Arial,sans-serif;font-size:11px;letter-spacing:.04em;color:var(--text-faint);margin:2px 0 12px}
+.form-note span{color:var(--gold);font-weight:700}
+
+/* hibás / üresen hagyott kötelező mező (csak küldési kísérlet után) */
+.catering-form.was-validated .form-field:has(:invalid) > label{color:#d0483e}
+.catering-form.was-validated .form-field input:invalid,
+.catering-form.was-validated .form-field select:invalid,
+.catering-form.was-validated .form-field textarea:invalid{
+  border-color:#d0483e;
+  border-left:3px solid #d0483e;
+  background-color:rgba(208,72,62,.06);
+  animation:fieldShake .35s ease;
+}
+@keyframes fieldShake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-4px)}
+  75%{transform:translateX(4px)}
+}
+@media (prefers-reduced-motion:reduce){
+  .catering-form.was-validated .form-field input:invalid,
+  .catering-form.was-validated .form-field select:invalid,
+  .catering-form.was-validated .form-field textarea:invalid{animation:none}
+}
+
 /* =========================================
    RESPONSIVE
    ========================================= */
@@ -601,6 +654,7 @@ body.modal-open{overflow:hidden}
   .modal-inner{padding:40px 20px 24px}
   .modal h2{font-size:21px}
   .modal p{font-size:14px}
+  .result-inner{padding:36px 20px 24px}
 }
 
 @media(max-width:420px){

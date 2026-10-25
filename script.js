@@ -99,19 +99,62 @@ const revealObserver = new IntersectionObserver((entries) => {
 document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
 // ============================
-// Ajánlatkérő űrlap (AJAX -> PHP -> SMTP)
+// Ajánlatkérő űrlap (AJAX -> PHP) + eredmény popup
 // ============================
 const cateringForm = document.getElementById('cateringForm');
+const resultModal = document.getElementById('resultModal');
+
+let focusAfterClose = null;
+
+function showResult(type, message) {
+  if (!resultModal) { alert(message); return; }
+  resultModal.classList.remove('is-success', 'is-error', 'is-closing');
+  resultModal.classList.add(type === 'success' ? 'is-success' : 'is-error');
+  document.getElementById('resultIcon').textContent = type === 'success' ? '✓' : '!';
+  document.getElementById('resultTitle').textContent = t(type === 'success' ? 'res_ok_title' : 'res_err_title');
+  document.getElementById('resultText').textContent = message;
+  if (!resultModal.open) resultModal.showModal();
+  document.body.classList.add('modal-open');
+}
+
+if (resultModal) {
+  let resultClosing = false;
+  const closeResult = () => {
+    if (!resultModal.open || resultClosing) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      resultModal.close();
+      return;
+    }
+    resultClosing = true;
+    resultModal.classList.add('is-closing');
+    setTimeout(() => {
+      resultClosing = false;
+      resultModal.classList.remove('is-closing');
+      resultModal.close();
+    }, 300);
+  };
+  document.getElementById('resultCloseBtn').addEventListener('click', closeResult);
+  resultModal.addEventListener('click', (e) => { if (e.target === resultModal) closeResult(); });
+  resultModal.addEventListener('cancel', (e) => { e.preventDefault(); closeResult(); });
+  resultModal.addEventListener('close', () => {
+    document.body.classList.remove('modal-open');
+    if (focusAfterClose) {
+      focusAfterClose.focus();
+      focusAfterClose = null;
+    }
+  });
+}
 
 if (cateringForm) {
   const submitBtn = document.getElementById('formSubmitBtn');
-  const formMessage = document.getElementById('formMessage');
 
   cateringForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     if (!cateringForm.checkValidity()) {
-      cateringForm.reportValidity();
+      cateringForm.classList.add('was-validated');
+      focusAfterClose = cateringForm.querySelector(':invalid');
+      showResult('error', t('msg.required'));
       return;
     }
 
@@ -120,8 +163,6 @@ if (cateringForm) {
 
     submitBtn.disabled = true;
     submitBtn.textContent = t('msg.sending');
-    formMessage.textContent = '';
-    formMessage.className = 'form-message';
 
     try {
       const response = await fetch('send-mail.php', {
@@ -138,16 +179,16 @@ if (cateringForm) {
       }
 
       if (response.ok && result.success) {
-        formMessage.textContent = result.message || t('msg.success');
-        formMessage.classList.add('form-message--success');
+        showResult('success', result.message || t('msg.success'));
         cateringForm.reset();
+        cateringForm.classList.remove('was-validated');
+        const hiddenLang = document.getElementById('f-lang');
+        if (hiddenLang) hiddenLang.value = currentLang;
       } else {
-        formMessage.textContent = result.message || t('msg.error');
-        formMessage.classList.add('form-message--error');
+        showResult('error', result.message || t('msg.error'));
       }
     } catch (err) {
-      formMessage.textContent = t('msg.network');
-      formMessage.classList.add('form-message--error');
+      showResult('error', t('msg.network'));
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = originalBtnText;

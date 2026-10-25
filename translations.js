@@ -157,7 +157,12 @@ window.TRANSLATIONS = {
     "msg.unexpected": "Váratlan válasz érkezett a szervertől.",
     "msg.success": "Köszönjük! Az ajánlatkérést elküldtük, hamarosan jelentkezünk.",
     "msg.error": "Hiba történt a küldés során. Kérjük, próbálja újra, vagy hívjon minket telefonon.",
-    "msg.network": "Hálózati hiba történt. Kérjük, ellenőrizze az internetkapcsolatot, majd próbálja újra."
+    "msg.network": "Hálózati hiba történt. Kérjük, ellenőrizze az internetkapcsolatot, majd próbálja újra.",
+    "res_ok_title": "Köszönjük!",
+    "res_err_title": "Hiba történt",
+    "res_close": "Rendben",
+    "f_required_note": "<span>*</span> Minden mező kitöltése kötelező",
+    "msg.required": "Kérjük, töltse ki az összes mezőt – a pirossal jelölt mezők még hiányoznak vagy hibásak."
   },
   "en": {
     "title": "Exclusive Catering by Elefántos – Catering in Pécs",
@@ -315,7 +320,12 @@ window.TRANSLATIONS = {
     "msg.unexpected": "Unexpected response from the server.",
     "msg.success": "Thank you! Your enquiry has been sent, we will get back to you shortly.",
     "msg.error": "Something went wrong while sending. Please try again or call us.",
-    "msg.network": "Network error. Please check your internet connection and try again."
+    "msg.network": "Network error. Please check your internet connection and try again.",
+    "res_ok_title": "Thank you!",
+    "res_err_title": "Something went wrong",
+    "res_close": "OK",
+    "f_required_note": "<span>*</span> All fields are required",
+    "msg.required": "Please fill in all fields – the ones marked in red are missing or invalid."
   },
   "de": {
     "title": "Exclusive Catering by Elefántos – Catering in Pécs",
@@ -473,6 +483,11 @@ window.TRANSLATIONS = {
     "msg.unexpected": "Unerwartete Antwort vom Server.",
     "msg.success": "Vielen Dank! Ihre Anfrage wurde gesendet, wir melden uns in Kürze bei Ihnen.",
     "msg.error": "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
-    "msg.network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+    "msg.network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "res_ok_title": "Vielen Dank!",
+    "res_err_title": "Es ist ein Fehler aufgetreten",
+    "res_close": "OK",
+    "f_required_note": "<span>*</span> Alle Felder sind Pflichtfelder",
+    "msg.required": "Bitte füllen Sie alle Felder aus – die rot markierten Felder fehlen oder sind ungültig."
   }
 };
