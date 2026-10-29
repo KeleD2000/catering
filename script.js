@@ -151,6 +151,15 @@ if (cateringForm) {
   cateringForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // Extra biztonság kedvéért: ellenőrizzük kézzel is a vendégek számát
+    const guestsInput = document.getElementById('f-guests');
+    if (guestsInput && parseInt(guestsInput.value, 10) > 200) {
+      cateringForm.classList.add('was-validated');
+      focusAfterClose = guestsInput;
+      showResult('error', 'A vendégek száma legfeljebb 200 lehet!'); // Vagy t('msg.max_guests')
+      return;
+    }
+
     if (!cateringForm.checkValidity()) {
       cateringForm.classList.add('was-validated');
       focusAfterClose = cateringForm.querySelector(':invalid');
