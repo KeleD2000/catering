@@ -5,7 +5,7 @@ date_default_timezone_set('Europe/Budapest');
 // =====================================================
 // BEÁLLÍTÁSOK – ezt a 3 sort kell átírni
 // =====================================================
-$to      = 'k.dominik2000@gmail.com';      // ide érkeznek az ajánlatkérések
+$to      = 'catering@elefantos.hu';      // ide érkeznek az ajánlatkérések
 $from    = 'noreply@elefantoscatering.hu';    // FONTOS: a Rackhoston lévő domain egyik címe legyen!
 $siteUrl = 'https://elefantoscatering.hu';    // az oldal címe
 $sendConfirmation = true;                    // true = az ügyfél is kap visszaigazoló levelet
